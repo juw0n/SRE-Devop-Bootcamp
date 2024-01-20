@@ -7,7 +7,6 @@ CREATE TABLE "students" (
   "date_of_birth" date NOT NULL,
   "phone_number" varchar(20) NOT NULL,
   "email" varchar NOT NULL,
-  "residential_address" varchar NOT NULL,
   "year_of_enroll" integer NOT NULL,
   "country" varchar NOT NULL,
   "major" varchar NOT NULL,
