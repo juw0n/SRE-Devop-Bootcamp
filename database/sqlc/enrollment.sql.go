@@ -45,7 +45,7 @@ DELETE FROM enrollments
 WHERE enrollment_id = $1
 `
 
-func (q *Queries) DeleteEnrollment(ctx context.Context, enrollmentID int32) error {
+func (q *Queries) DeleteEnrollment(ctx context.Context, enrollmentID int64) error {
 	_, err := q.db.ExecContext(ctx, deleteEnrollment, enrollmentID)
 	return err
 }
@@ -55,7 +55,7 @@ SELECT enrollment_id, enrollment_date, student_id, course_id, created_at FROM en
 WHERE enrollment_id = $1 LIMIT 1
 `
 
-func (q *Queries) GetEnrollment(ctx context.Context, enrollmentID int32) (Enrollment, error) {
+func (q *Queries) GetEnrollment(ctx context.Context, enrollmentID int64) (Enrollment, error) {
 	row := q.db.QueryRowContext(ctx, getEnrollment, enrollmentID)
 	var i Enrollment
 	err := row.Scan(

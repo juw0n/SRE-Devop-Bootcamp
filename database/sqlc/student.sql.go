@@ -77,7 +77,7 @@ DELETE FROM students
 WHERE student_id = $1
 `
 
-func (q *Queries) DeleteStudent(ctx context.Context, studentID int32) error {
+func (q *Queries) DeleteStudent(ctx context.Context, studentID int64) error {
 	_, err := q.db.ExecContext(ctx, deleteStudent, studentID)
 	return err
 }
@@ -87,7 +87,7 @@ SELECT student_id, first_name, middle_name, last_name, gender, date_of_birth, ph
 WHERE student_id = $1 LIMIT 1
 `
 
-func (q *Queries) GetStudent(ctx context.Context, studentID int32) (Student, error) {
+func (q *Queries) GetStudent(ctx context.Context, studentID int64) (Student, error) {
 	row := q.db.QueryRowContext(ctx, getStudent, studentID)
 	var i Student
 	err := row.Scan(
@@ -173,7 +173,7 @@ RETURNING student_id, first_name, middle_name, last_name, gender, date_of_birth,
 `
 
 type UpdateStudentParams struct {
-	StudentID    int32     `json:"student_id"`
+	StudentID    int64     `json:"student_id"`
 	FirstName    string    `json:"first_name"`
 	MiddleName   string    `json:"middle_name"`
 	LastName     string    `json:"last_name"`

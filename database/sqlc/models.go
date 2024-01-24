@@ -10,14 +10,14 @@ import (
 )
 
 type Course struct {
-	CourseID   int32          `json:"course_id"`
+	CourseID   int64          `json:"course_id"`
 	CourseName string         `json:"course_name"`
 	Instructor sql.NullString `json:"instructor"`
 	CreatedAt  time.Time      `json:"created_at"`
 }
 
 type Enrollment struct {
-	EnrollmentID   int32     `json:"enrollment_id"`
+	EnrollmentID   int64     `json:"enrollment_id"`
 	EnrollmentDate time.Time `json:"enrollment_date"`
 	StudentID      int32     `json:"student_id"`
 	CourseID       int32     `json:"course_id"`
@@ -25,7 +25,7 @@ type Enrollment struct {
 }
 
 type Student struct {
-	StudentID    int32     `json:"student_id"`
+	StudentID    int64     `json:"student_id"`
 	FirstName    string    `json:"first_name"`
 	MiddleName   string    `json:"middle_name"`
 	LastName     string    `json:"last_name"`

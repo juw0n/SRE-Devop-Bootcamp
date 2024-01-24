@@ -32,4 +32,8 @@ migrate_fix:
 sqlc:
 	sqlc generate
 
-.PHONY: run_postgres create_user create_db drop_db migrate_up migrate_down migrate_fix sqlc
+test:
+	go test -v ./...
+
+
+.PHONY: run_postgres create_user create_db drop_db migrate_up migrate_down migrate_fix sqlc test

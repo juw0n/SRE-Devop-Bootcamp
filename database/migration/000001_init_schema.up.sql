@@ -1,5 +1,5 @@
 CREATE TABLE "students" (
-  "student_id" integer PRIMARY KEY,
+  "student_id" bigserial PRIMARY KEY,
   "first_name" varchar NOT NULL,
   "middle_name" varchar NOT NULL,
   "last_name" varchar NOT NULL,
@@ -14,14 +14,14 @@ CREATE TABLE "students" (
 );
 
 CREATE TABLE "courses" (
-  "course_id" integer PRIMARY KEY,
+  "course_id" bigserial PRIMARY KEY,
   "course_name" varchar NOT NULL,
   "instructor" varchar,
   "created_at" timestamptz NOT NULL DEFAULT (now())
 );
 
 CREATE TABLE "enrollments" (
-  "enrollment_id" integer PRIMARY KEY,
+  "enrollment_id" bigserial PRIMARY KEY,
   "enrollment_date" date NOT NULL,
   "student_id" integer NOT NULL,
   "course_id" integer NOT NULL,

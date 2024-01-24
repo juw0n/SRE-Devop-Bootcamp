@@ -42,7 +42,7 @@ DELETE FROM courses
 WHERE course_id = $1
 `
 
-func (q *Queries) DeleteCourse(ctx context.Context, courseID int32) error {
+func (q *Queries) DeleteCourse(ctx context.Context, courseID int64) error {
 	_, err := q.db.ExecContext(ctx, deleteCourse, courseID)
 	return err
 }
@@ -52,7 +52,7 @@ SELECT course_id, course_name, instructor, created_at FROM courses
 WHERE course_id = $1 LIMIT 1
 `
 
-func (q *Queries) GetCourse(ctx context.Context, courseID int32) (Course, error) {
+func (q *Queries) GetCourse(ctx context.Context, courseID int64) (Course, error) {
 	row := q.db.QueryRowContext(ctx, getCourse, courseID)
 	var i Course
 	err := row.Scan(
@@ -114,7 +114,7 @@ RETURNING course_id, course_name, instructor, created_at
 `
 
 type UpdateCourseParams struct {
-	CourseID   int32          `json:"course_id"`
+	CourseID   int64          `json:"course_id"`
 	CourseName string         `json:"course_name"`
 	Instructor sql.NullString `json:"instructor"`
 }
