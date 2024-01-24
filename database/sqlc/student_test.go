@@ -3,27 +3,31 @@ package db
 import (
 	"context"
 	"testing"
-	"time"
 
+	"github.com/juw0n/SRE-Devop-Bootcamp/util"
 	"github.com/stretchr/testify/require"
 )
 
 func TestCreateStudent(t *testing.T) {
 	// Parse the date string into time.Time
-	dob, err := time.Parse("2006-01-02", "2000-04-02")
-	require.NoError(t, err)
+	// dob, err := time.Parse("2006-01-02", "2000-04-02")
+	// require.NoError(t, err)
+
+	// Generate first and last names first
+	firstName := util.RandomFirstName()
+	lastName := util.RandomLastName()
 
 	arg := CreateStudentParams{
-		FirstName:    "Esther",
-		MiddleName:   "Anuoluwa",
-		LastName:     "Oluwagbenga",
-		Gender:       "F",
-		DateOfBirth:  dob,
-		PhoneNumber:  "080678565433",
-		Email:        "oduns07@gmail.com",
-		YearOfEnroll: 2022,
-		Country:      "Nigeria",
-		Major:        "Marketing",
+		FirstName:    firstName,
+		MiddleName:   util.RandomMiddleName(),
+		LastName:     lastName,
+		Gender:       util.RandomGender(),
+		DateOfBirth:  util.RandomDateOfBirth(2000, 2099),
+		PhoneNumber:  util.RandomPhoneNumber(),
+		Email:        util.RandomEmail(firstName, lastName),
+		YearOfEnroll: int32(util.RandomYearOfEnrollment(2005, 2099)),
+		Country:      util.RandomCountries(),
+		Major:        util.RandomMajor(),
 	}
 
 	student, err := testQueries.CreateStudent(context.Background(), arg)

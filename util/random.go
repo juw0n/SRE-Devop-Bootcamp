@@ -71,15 +71,32 @@ func RandomMajor() string {
 	return major[rand.Intn(n)]
 }
 
+// RandomDateOfBirth generates a random date of birth within a given range of years.
+func RandomDateOfBirth(startYear, endYear int) time.Time {
+	year := RandomInt(int64(startYear), int64(endYear))
+	month := time.Month(rand.Intn(12) + 1)
+	day := rand.Intn(28) + 1 // Keeping it simple with max 28 days to avoid month/day mismatch
+
+	return time.Date(int(year), month, day, 0, 0, 0, 0, time.UTC)
+}
+
 // RandomPhoneNumber generates a random 11-digit phone number as a string.
 func RandomPhoneNumber() string {
-	// Phone number should not start with 0, so start with a digit from 1 to 9
-	phoneNumber := fmt.Sprintf("%d", rand.Intn(9)+1)
+	phoneNumber := "0"                               // Start with '0'
+	phoneNumber += fmt.Sprintf("%d", rand.Intn(9)+1) // Ensure the second digit is between 1 and 9
 
-	// Generate the remaining 10 digits
-	for i := 0; i < 10; i++ {
+	for i := 0; i < 9; i++ { // Generate the remaining 9 digits
 		phoneNumber += fmt.Sprintf("%d", rand.Intn(10))
 	}
-
 	return phoneNumber
+}
+
+// RandomEmail generates a random email using first and last names.
+func RandomEmail(firstName, lastName string) string {
+	return fmt.Sprintf("%s%s@gmail.com", strings.ToLower(firstName), strings.ToLower(lastName))
+}
+
+// RandomYearOfEnrollment generates a random year of enrollment within a range.
+func RandomYearOfEnrollment(startYear, endYear int) int {
+	return int(RandomInt(int64(startYear), int64(endYear)))
 }
