@@ -7,7 +7,6 @@ package db
 
 import (
 	"context"
-	"database/sql"
 )
 
 const createCourse = `-- name: CreateCourse :one
@@ -21,8 +20,8 @@ RETURNING course_id, course_name, instructor, created_at
 `
 
 type CreateCourseParams struct {
-	CourseName string         `json:"course_name"`
-	Instructor sql.NullString `json:"instructor"`
+	CourseName string `json:"course_name"`
+	Instructor string `json:"instructor"`
 }
 
 func (q *Queries) CreateCourse(ctx context.Context, arg CreateCourseParams) (Course, error) {
@@ -114,9 +113,9 @@ RETURNING course_id, course_name, instructor, created_at
 `
 
 type UpdateCourseParams struct {
-	CourseID   int64          `json:"course_id"`
-	CourseName string         `json:"course_name"`
-	Instructor sql.NullString `json:"instructor"`
+	CourseID   int64  `json:"course_id"`
+	CourseName string `json:"course_name"`
+	Instructor string `json:"instructor"`
 }
 
 func (q *Queries) UpdateCourse(ctx context.Context, arg UpdateCourseParams) (Course, error) {

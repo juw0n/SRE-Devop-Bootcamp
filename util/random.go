@@ -100,3 +100,21 @@ func RandomEmail(firstName, lastName string) string {
 func RandomYearOfEnrollment(startYear, endYear int) int {
 	return int(RandomInt(int64(startYear), int64(endYear)))
 }
+
+// RandomCourseName returns a random course name from a predefined list.
+func RandomCourseName() string {
+	courses := []string{"Introduction to Computer Science", "Principles of Economics", "Basic Concepts of Mathematics", "World History: Ancient to Modern Times", "Environmental Science and Sustainability", "Introduction to Psychology", "Creative Writing Workshop", "Fundamentals of Physics", "Global Politics and International Relations", "Introduction to Philosophy", "Digital Media and Society", "Organic Chemistry", "Cultural Anthropology", "Business Management and Leadership", "Human Anatomy and Physiology", "Contemporary Art and Design", "Data Analytics and Visualization", "Robotics and Automation", "Music Theory and Composition", "Developmental Biology"}
+	n := len(courses)
+	return courses[rand.Intn(n)]
+}
+
+// RandomInstructorName generates a random name for a course instructor.
+func RandomInstructorName() string {
+	firstNames := []string{"John", "Jane", "Michael", "Sarah", "William", "Emily", "David", "Emma", "Richard", "Lisa"}
+	lastNames := []string{"Smith", "Johnson", "Williams", "Jones", "Brown", "Davis", "Miller", "Wilson", "Moore", "Taylor"}
+
+	firstName := firstNames[rand.Intn(len(firstNames))]
+	lastName := lastNames[rand.Intn(len(lastNames))]
+
+	return fmt.Sprintf("%s %s", firstName, lastName)
+}

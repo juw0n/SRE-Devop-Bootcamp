@@ -16,7 +16,7 @@ CREATE TABLE "students" (
 CREATE TABLE "courses" (
   "course_id" bigserial PRIMARY KEY,
   "course_name" varchar NOT NULL,
-  "instructor" varchar,
+  "instructor" varchar NOT NULL,
   "created_at" timestamptz NOT NULL DEFAULT (now())
 );
 

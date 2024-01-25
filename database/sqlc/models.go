@@ -5,15 +5,14 @@
 package db
 
 import (
-	"database/sql"
 	"time"
 )
 
 type Course struct {
-	CourseID   int64          `json:"course_id"`
-	CourseName string         `json:"course_name"`
-	Instructor sql.NullString `json:"instructor"`
-	CreatedAt  time.Time      `json:"created_at"`
+	CourseID   int64     `json:"course_id"`
+	CourseName string    `json:"course_name"`
+	Instructor string    `json:"instructor"`
+	CreatedAt  time.Time `json:"created_at"`
 }
 
 type Enrollment struct {
