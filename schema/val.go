@@ -21,7 +21,7 @@ type UpdateStudent struct {
 	FirstName    string    `json:"first_name" binding:"required"`
 	MiddleName   string    `json:"middle_name" binding:"required"`
 	LastName     string    `json:"last_name" binding:"required"`
-	Gender       string    `json:"gender" binding:"required"`
+	Gender       string    `json:"gender" binding:"required, oneof=M F"`
 	DateOfBirth  time.Time `json:"date_of_birth" binding:"required"`
 	PhoneNumber  string    `json:"phone_number" binding:"required"`
 	Email        string    `json:"email" binding:"required"`
