@@ -108,17 +108,20 @@ func (st *StudentController) UpdateStudent(ctx *gin.Context) {
 }
 
 // Get a single student handler
-func (st *StudentController) GetStudentById(ctx *gin.Context) {
-	// studentIDStr := ctx.Param("studentID")
+func (st *StudentController) GetStudent(ctx *gin.Context) {
+	studentIDStr := ctx.Param("studentID")
 
-	// // Convert studentID from string to int64
-	// studentID, err := strconv.ParseInt(studentIDStr, 10, 64)
-	// if err != nil {
-	// 	ctx.JSON(http.StatusBadRequest, gin.H{"status": "error", "message": "Invalid student ID"})
-	// 	return
-	// }
+	// Log the value of studentIDStr for debugging
+	log.Println("Student ID from URL:", studentIDStr)
 
-	student, err := st.db.GetStudent(ctx, StudentID)
+	// Convert studentID from string to int64
+	studentID, err := strconv.ParseInt(studentIDStr, 10, 64)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "error", "message": "Invalid student ID"})
+		return
+	}
+	// Call the database method to get the student
+	student, err := st.db.GetStudent(ctx, studentID)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			ctx.JSON(http.StatusNotFound, gin.H{"status": "fail", "message": "No student with that ID exists"})
@@ -127,7 +130,7 @@ func (st *StudentController) GetStudentById(ctx *gin.Context) {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Internal server error"})
 		return
 	}
-
+	// Return the student data as JSON
 	ctx.JSON(http.StatusOK, gin.H{"status": "success", "student": student})
 }
 
