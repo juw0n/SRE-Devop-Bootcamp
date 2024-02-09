@@ -65,14 +65,6 @@ func (st *StudentController) CreateStudent(ctx *gin.Context) {
 // Update student handler
 func (st *StudentController) UpdateStudent(ctx *gin.Context) {
 	var payload *reqvalidate.UpdateStudent
-	// studentIDstr := ctx.Param("studentID")
-
-	// // Convert studentID from string to int64
-	// studentID, err := strconv.ParseInt(studentIDstr, 10, 64)
-	// if err != nil {
-	// 	ctx.JSON(http.StatusBadRequest, gin.H{"status": "error", "message": "Invalid student ID"})
-	// 	return
-	// }
 
 	if err := ctx.ShouldBindJSON(&payload); err != nil {
 		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": err.Error()})
