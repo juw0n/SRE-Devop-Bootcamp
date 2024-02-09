@@ -89,7 +89,7 @@ func (st *StudentController) UpdateStudent(ctx *gin.Context) {
 
 	if err != nil {
 		if err == sql.ErrNoRows {
-			ctx.JSON(http.StatusNotFound, gin.H{"status": "fail", "message": "No post with that ID exists"})
+			ctx.JSON(http.StatusNotFound, gin.H{"status": "fail", "message": "No student with that ID exists"})
 			return
 		}
 		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": err.Error()})

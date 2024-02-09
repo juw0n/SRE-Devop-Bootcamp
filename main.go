@@ -23,6 +23,12 @@ var (
 
 	StudentController controllers.StudentController
 	StudentRoutes     routes.StudentRoutes
+
+	CourseController controllers.CourseController
+	CourseRoutes     routes.CourseRoutes
+
+	EnrollmentController controllers.EnrollmentController
+	EnrollmentRoutes     routes.EnrollmentRoutes
 )
 
 func init() {
@@ -44,6 +50,12 @@ func init() {
 
 	StudentController = *controllers.NewStudentController(db, ctx)
 	StudentRoutes = routes.NewStudentRoutes(StudentController)
+
+	CourseController = *controllers.NewCourseController(db, ctx)
+	CourseRoutes = routes.NewCourseRoutes(CourseController)
+
+	EnrollmentController = *controllers.NewEnrollmentController(db, ctx)
+	EnrollmentRoutes = routes.NewEnrollmentRoutes(EnrollmentController)
 
 	server = gin.Default()
 }
@@ -76,6 +88,13 @@ func main() {
 	})
 	// Initialize Student routes
 	StudentRoutes.InitRoutes(router)
+
+	// Initialize Course routes
+	CourseRoutes.InitRoutes(router)
+
+	// Initialize Enrollment routes
+	EnrollmentRoutes.InitRoutes(router)
+
 	// Handle no route found
 	server.NoRoute(func(ctx *gin.Context) {
 		ctx.JSON(http.StatusNotFound, gin.H{"status": "fail", "message": fmt.Sprintf("Route %s not found", ctx.Request.URL)})
