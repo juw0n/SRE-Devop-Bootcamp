@@ -35,5 +35,7 @@ sqlc:
 test:
 	go test -v -cover ./...
 
+server:
+	go run main.go
 
-.PHONY: run_postgres create_user create_db drop_db migrate_up migrate_down migrate_fix sqlc test
+.PHONY: run_postgres create_user create_db drop_db migrate_up migrate_down migrate_fix sqlc test server

@@ -81,7 +81,7 @@ func main() {
 	server.Use(cors.New(corsConfig))
 
 	// Set up routing
-	router := server.Group("/api")
+	router := server.Group("/api/v1")
 
 	router.GET("/healthchecker", func(ctx *gin.Context) {
 		ctx.JSON(http.StatusOK, gin.H{"status": "success", "message": "Welcome to my simple REST API using Golang and PostgreSQL"})
