@@ -14,11 +14,16 @@ import (
 )
 
 type StudentController struct {
-	db  *db.Queries
+	db  db.Querier
 	ctx context.Context
 }
 
-func NewStudentController(db *db.Queries, ctx context.Context) *StudentController {
+// type StudentController struct {
+// 	db  *db.Queries
+// 	ctx context.Context
+// }
+
+func NewStudentController(db db.Querier, ctx context.Context) *StudentController {
 	return &StudentController{db, ctx}
 }
 

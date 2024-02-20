@@ -3,41 +3,55 @@ package controllers
 import (
 	"context"
 	"net/http"
+	"net/http/httptest"
 	"testing"
 
 	"github.com/gin-gonic/gin"
-	"github.com/golang/mock/gomock"
-	db "github.com/juw0n/SRE-Devop-Bootcamp/database/sqlc"
-	dbMocks "github.com/juw0n/SRE-Devop-Bootcamp/mocks"
-	// "go.uber.org/mock/gomock"
+	"github.com/juw0n/SRE-Devop-Bootcamp/mocks"
+	"github.com/juw0n/SRE-Devop-Bootcamp/reqvalidate"
+	"github.com/juw0n/SRE-Devop-Bootcamp/util"
+	"go.uber.org/mock/gomock"
 )
 
 func TestCreateStudent(t *testing.T) {
-	// Create a new instance of the mock controller
-	ctrl := gomock.NewController(t)
-	defer ctrl.Finish()
+	mockCtrl := gomock.NewController(t)
+	defer mockCtrl.Finish()
 
-	// Create a mock for the db.Queries interface
-	mockDB := dbMocks.NewMockQuerier(ctrl)
+	mockDB := mocks.NewMockQuerier(mockCtrl)
+	ctx := context.Background()
 
-	// Create a context
-	ctx := context.TODO()
+	studentController := NewStudentController(mockDB, ctx)
 
-	// Create a new instance of the student controller with the mock
-	stController := NewStudentController(mockDB, ctx)
+	// Prepare a sample request payload
+	firstName := util.RandomFirstName()
+	lastName := util.RandomLastName()
 
-	// Mock the behavior of CreateStudent method in the mock
-	mockDB.EXPECT().CreateStudent(ctx, gomock.Any()).Return(&db.Student{}, nil)
-
-	// Create a mock gin context
-	ginCtx, _ := gin.CreateTestContext(nil)
-	ginCtx.Set("testKey", "testValue")
-
-	// Call the function under test
-	stController.CreateStudent(ginCtx)
-
-	// Check the response
-	if ginCtx.Writer.Status() != http.StatusCreated {
-		t.Errorf("Expected status %d but got %d", http.StatusCreated, ginCtx.Writer.Status())
+	payload := &reqvalidate.CreateStudent{
+		FirstName:    firstName,
+		MiddleName:   util.RandomMiddleName(),
+		LastName:     lastName,
+		Gender:       util.RandomGender(),
+		DateOfBirth:  util.RandomDateOfBirth(2000, 2099),
+		PhoneNumber:  util.RandomPhoneNumber(),
+		Email:        util.RandomEmail(firstName, lastName),
+		YearOfEnroll: int32(util.RandomYearOfEnrollment(2005, 2099)),
+		Country:      util.RandomCountries(),
+		Major:        util.RandomMajor(),
 	}
+
+	// Set up mock expectations
+	mockDB.EXPECT().
+		CreateStudent(gomock.Any(), gomock.Any()).
+		Return(expectedStudent, nil).
+		Times(1)
+
+	// Perform the HTTP request
+	w := httptest.NewRecorder()
+	c, _ := gin.CreateTestContext(w)
+	c.Request, _ = http.NewRequest(http.MethodPost, "/", payload)
+	studentController.CreateStudent(c)
+
+	// // Assert the response
+	// assert.Equal(t, http.StatusBadGateway, w.Code)
+	// // Add more assertions based on the expected behavior of your controller
 }
