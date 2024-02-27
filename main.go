@@ -84,6 +84,8 @@ func main() {
 	router := server.Group("/api/v1")
 
 	router.GET("/healthchecker", func(ctx *gin.Context) {
+		// Log successful health check
+		log.Println("INFO: Health check passed successfully.")
 		ctx.JSON(http.StatusOK, gin.H{"status": "success", "message": "Welcome to my simple REST API using Golang and PostgreSQL"})
 	})
 	// Initialize Student routes
