@@ -1,4 +1,4 @@
-## Student CRUD REST API in Golang with Gin
+## Student CRUD REST API in Golang with Gin (following One2n Playbook SRE Challenge)
 This repository implements a simple REST API for managing student data using Golang and the Gin framework.
 
 ## Learning Objectives
