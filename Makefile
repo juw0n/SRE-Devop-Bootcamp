@@ -41,4 +41,7 @@ server:
 mock:
 	mockgen -source=/home/juwon/Desktop/cloudComputingLessons/SRE-Devop-Bootcamp/database/sqlc/querier.go -destination=mocks/student_mock.go -package=mocks
 
-.PHONY: run_postgres create_user create_db drop_db migrate_up migrate_down migrate_fix sqlc test server mock
+build:
+	docker build -t my-go-rest-api .
+
+.PHONY: run_postgres create_user create_db drop_db migrate_up migrate_down migrate_fix sqlc test server mock build
