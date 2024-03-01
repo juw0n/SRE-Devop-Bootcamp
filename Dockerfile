@@ -15,7 +15,7 @@ COPY . ./
 # Build
 RUN CGO_ENABLED=0 GOOS=linux go build -o /docker-go-api
 
-EXPOSE 8080
+EXPOSE 8000
 
 # Run
 CMD ["/docker-go-api"]
