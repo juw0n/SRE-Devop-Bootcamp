@@ -1,11 +1,11 @@
 ## Student CRUD REST API in Golang with Gin (following One2n Playbook SRE Challenge)
 This repository implements a simple REST API for managing student data using Golang and the Gin framework.
 
-## Learning Objectives
+### Learning Objectives
 * REST API Best Practices: Follow industry standards for designing and implementing RESTful APIs.
 * Twelve-Factor App Methodology: Adhere to the principles of the Twelve-Factor App methodology for creating portable and maintainable applications.
 
-## Functionality
+### Functionality
 This API allows you to perform CRUD operations (Create, Read, Update, and Delete) on student data:
 
 * Create a new student: POST /api/v1/students
@@ -16,7 +16,7 @@ This API allows you to perform CRUD operations (Create, Read, Update, and Delete
 
 PS: the same function and end points are made for courses and enrollment
 
-## Project Setup
+### Project Setup
 1. Clone the repository:
 git clone https://github.com/<your_username>/student-api.git
 2. Install dependencies:
@@ -31,7 +31,7 @@ DB_URL=postgres://user:password@localhost:5432/student_db
 4. Build and run the API:
 make run
 
-## Additional Features
+### Additional Features
 * API Versioning: Utilizes versioning prefix (/api/v1) for clarity and potential future changes.
 * HTTP Verbs: Employs appropriate HTTP verbs (POST, GET, PUT, DELETE) for specific operations.
 * Logging: Implements informative logs with different log levels for debugging and monitoring.
@@ -40,12 +40,12 @@ make run
 
 PS: I'm yet to complete the unit test for the api endpoint. I think i need collaboration on that. I am using gomock to mock the Db and make the test independent of the main DB.
 
-## Resources
+### Resources
 Database schema designed using https://app.diagrams.net/
 Configuration management with https://github.com/spf13/viper
 This project serves as a foundation for building and testing basic CRUD APIs using Golang and Gin. Feel free to explore and extend it further based on your specific requirements.
 
-## 2 - Containerise REST API (Building and Running a Docker Container)
+### 2 - Containerise REST API (Building and Running a Docker Container)
 Docker is used to containerized the API application. To build the image using docker:
 * Building the Docker Image
 1. Clone this repository to your local machine:
@@ -55,7 +55,7 @@ cd project_name
 3. Build the Docker image using the provided Dockerfile:
 docker build -t project_name .
 
-## PS: Replace project_name with your desired image name.
+### PS: Replace project_name with your desired image name.
 
 * Running the Docker Container
 1. Once the Docker image is built, you can run a container using the following command:
@@ -71,7 +71,7 @@ Replace:
 2. Access your application in a web browser or through API calls using:
 * localhost:host_port.
 
-# To stop and remove a running container, use:
+### To stop and remove a running container, use:
 * docker rm -f container_name
 To remove the Docker image, use:
 * docker rmi project_name
