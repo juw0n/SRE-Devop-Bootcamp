@@ -44,3 +44,34 @@ PS: I'm yet to complete the unit test for the api endpoint. I think i need colla
 Database schema designed using https://app.diagrams.net/
 Configuration management with https://github.com/spf13/viper
 This project serves as a foundation for building and testing basic CRUD APIs using Golang and Gin. Feel free to explore and extend it further based on your specific requirements.
+
+## 2 - Containerise REST API (Building and Running a Docker Container)
+Docker is used to containerized the API application. To build the image using docker:
+* Building the Docker Image
+1. Clone this repository to your local machine:
+git clone https://github.com/your_username/project_name.git
+2. Navigate to the project directory:
+cd project_name
+3. Build the Docker image using the provided Dockerfile:
+docker build -t project_name .
+
+## PS: Replace project_name with your desired image name.
+
+* Running the Docker Container
+1. Once the Docker image is built, you can run a container using the following command:
+docker run --name container_name -p host_port:container_port project_name
+
+Replace:
+
+* container_name with your desired container name.
+* host_port with the port on your host machine that you want to map to the container.
+* container_port with the port inside the container where your application is listening.
+* project_name with the name of the Docker image you built earlier.
+
+2. Access your application in a web browser or through API calls using:
+* localhost:host_port.
+
+# To stop and remove a running container, use:
+* docker rm -f container_name
+To remove the Docker image, use:
+* docker rmi project_name

@@ -39,7 +39,7 @@ mock:
 	mockgen -source=/home/juwon/Desktop/cloudComputingLessons/SRE-Devop-Bootcamp/database/sqlc/querier.go -destination=mocks/student_mock.go -package=mocks
 
 build:
-	docker build -t student-go-api .
+	docker build -t student-go-api:1.0.0 .
 
 run_api:
 	# update the host IP to the ip of the postgresql
