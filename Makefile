@@ -1,21 +1,18 @@
+## pull the postgres image
+pull_postgres:
+	docker pull postgres:16.2-alpine3.18
 
-run_postgres:
+postgres:
 	# Command to start PostgreSQL on linus ubuntu
-	sudo systemctl start postgresql
-
-create_user:
-	# Creating a user. If the user already exists, this will throw an error
-	@psql -U postgres -c "CREATE USER schooluser WITH PASSWORD 'school123';" || true
+	docker run --name postgres16 -e POSTGRES_USER=schooluser -e POSTGRES_PASSWORD=school123 -p 5432:5432 -d postgres:16.2-alpine3.18
 
 create_db:
-	# Creating a database. If the database already exists, this will throw an error
-	@psql -U postgres -c "CREATE DATABASE studentdb;" || true
-
-	# Grant all privileges of the database to the user
-	@psql -U postgres -c "GRANT ALL PRIVILEGES ON DATABASE studentdb TO schooluser;" || true
+	# Creating a database
+	docker exec -it postgres16 createdb --username=schooluser  --owner=schooluser studentdb
 
 drop_db:
 	# To drop/delete a database
+	docker exec -it postgres16 dropdb -U schooluser studentdb
 
 migrate_up:
 	# To execute the SQL statements in the migration files and create the define tables
@@ -42,6 +39,10 @@ mock:
 	mockgen -source=/home/juwon/Desktop/cloudComputingLessons/SRE-Devop-Bootcamp/database/sqlc/querier.go -destination=mocks/student_mock.go -package=mocks
 
 build:
-	docker build -t my-go-rest-api .
+	docker build -t student-go-api .
 
-.PHONY: run_postgres create_user create_db drop_db migrate_up migrate_down migrate_fix sqlc test server mock build
+run_api:
+	# update the host IP to the ip of the postgresql
+	docker run --name student-api -p 8080:8000 -e DB_SOURCE="postgresql://schooluser:school123@localhost:5432/studentdb?sslmode=disable" student-go-api:v1
+
+.PHONY: pull_postgres postgres create_user create_db drop_db migrate_up migrate_down migrate_fix sqlc test server mock build run_api
