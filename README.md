@@ -22,7 +22,7 @@ git clone https://github.com/<your_username>/student-api.git
 2. Install dependencies:
 go mod download
 3. Configure environment variables:
-Create a .env file in the project root directory and define any necessary environment variables (e.g., database connection details).
+Create app.env file in the project root directory and define any necessary environment variables (e.g., database connection details).
 
 Example:
 
@@ -55,7 +55,7 @@ cd project_name
 3. Build the Docker image using the provided Dockerfile:
 docker build -t project_name .
 
-### PS: Replace project_name with your desired image name.
+##### PS: Replace project_name with your desired image name.
 
 * Running the Docker Container
 1. Once the Docker image is built, you can run a container using the following command:

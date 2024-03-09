@@ -1,0 +1,17 @@
+version: '3.9'
+services:
+  postgres:
+    image: postgres:16.2-alpine3.18
+    environment:
+     - POSTGRES_USER=schooluser
+     - POSTGRES_DB=studentdb
+     - POSTGRES_PASSWORD=school123
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8080"
+    environment:
+      - DB_SOURCE=postgresql://schooluser:school123@postgres:5432/studentdb?sslmode=disable
