@@ -12,19 +12,30 @@ RUN go mod download
 COPY . ./
 
 # Build
-RUN CGO_ENABLED=0 GOOS=linux go build -o /app/student-go-api && echo "Built application binary: docker-go-rest-api"
+RUN go build -o student-go-api && echo "Built application binary: student-go-rest-api"
+RUN apk add curl
+RUN curl -L https://github.com/golang-migrate/migrate/releases/download/v4.15.0/migrate.linux-amd64.tar.gz | tar xvz
 
 # Stage 2: Runtime environment
 FROM alpine:latest
+
+RUN apk update && apk add bash
 
 WORKDIR /app
 
 # Copy the built binary from the builder stage
 COPY --from=builder-stage /app/student-go-api .
 COPY --from=builder-stage /app/app.env .
+COPY --from=builder-stage /app/start.sh .
+COPY --from=builder-stage /app/migrate ./migrate
+COPY --from=builder-stage /app/database/migration ./migration
+
+# Change permissions of start.sh to make it executable
+RUN chmod +x start.sh
 
 # Expose port 8000
 EXPOSE 8000
 
 # Run
-CMD ["/app/student-go-api"]
+ENTRYPOINT [ "/app/start.sh" ]
+CMD [ "/app/student-go-api" ]
