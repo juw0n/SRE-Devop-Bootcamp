@@ -29,9 +29,12 @@ COPY --from=builder-stage /app/app.env .
 COPY --from=builder-stage /app/start.sh .
 COPY --from=builder-stage /app/migrate ./migrate
 COPY --from=builder-stage /app/database/migration ./migration
+COPY --from=builder-stage /app/wait-for.sh .
+
+RUN ls -la
 
 # Change permissions of start.sh to make it executable
-RUN chmod +x start.sh
+RUN chmod +x /app/start.sh
 
 # Expose port 8000
 EXPOSE 8000

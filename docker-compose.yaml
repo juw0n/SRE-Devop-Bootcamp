@@ -7,6 +7,8 @@ services:
      - POSTGRES_USER=schooluser
      - POSTGRES_DB=studentdb
      - POSTGRES_PASSWORD=school123
+    ports:
+      - "5432:5432"
 
   student-api:
     build:
@@ -14,7 +16,9 @@ services:
       dockerfile: Dockerfile
     ports:
       - "8080:8000"
-    depends_on:
-      - postgres
     environment:
       - DB_SOURCE=postgresql://schooluser:school123@postgres:5432/studentdb?sslmode=disable
+    depends_on:
+      - postgres
+    entrypoint: ["/app/wait-for.sh", "postgres:5432", "--", "/app/start.sh"]
+    command: ["/app/student-go-api"]
