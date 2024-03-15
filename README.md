@@ -75,3 +75,16 @@ Replace:
 * docker rm -f container_name
 To remove the Docker image, use:
 * docker rmi project_name
+
+### Milestone 3 --> Setup one-click local development setup
+
+On the basis that the team is familiar with the development environment and have all the required tools (Docker, Docker Compose, Make) on their locall machine,depending on the OS each team member is using. This milestone simplify the process of setting up the API on a local machine.
+The process of developing and deploying the project have been streamlined using docker compose for defining and running the API and database container. the setup is done the right order where the database is start and ready before the API container is spinned up.
+
+Upon cloning the project repo to your local make, run the following code/script to start the application:
+
+--> make start_db
+--> make run_api
+
+To top the containers:
+--> make stop_api

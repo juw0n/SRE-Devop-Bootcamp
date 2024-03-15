@@ -45,4 +45,13 @@ run_api:
 	# update the host IP to the ip of the postgresql
 	docker run --name student-api -p 8080:8000 -e DB_SOURCE="postgresql://schooluser:school123@localhost:5432/studentdb?sslmode=disable" student-go-api:v1
 
-.PHONY: pull_postgres postgres create_user create_db drop_db migrate_up migrate_down migrate_fix sqlc test server mock build run_api
+start_db:
+	docker compose up -d postgres
+
+run_api: start_db
+	docker compose up -d student-api
+
+stop_api:
+	docker compose down
+
+.PHONY: pull_postgres postgres create_user create_db drop_db migrate_up migrate_down migrate_fix sqlc test server mock build run_api start_db run_api stop_api
