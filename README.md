@@ -88,3 +88,10 @@ Upon cloning the project repo to your local make, run the following code/script 
 
 To top the containers:
 --> make stop_api
+
+### Milestone 4 --> Setup a CI pipeline
+
+Resources: 
+- https://docs.github.com/en/actions/learn-github-actions/understanding-github-actions#create-an-example-workflow
+
+The main focus of this module is to create a simple CI pipeline that will be used to build and push the project docker image to a central registry (I am using dockerhub).
