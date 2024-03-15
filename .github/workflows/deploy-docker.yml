@@ -27,4 +27,5 @@ jobs:
             with:
                 context: .
                 push: true
-                tags: ${{ secrets.DOCKER_USERNAME }}/${{ github.event.repository.name }}:latest
+                tags: ${{ secrets.DOCKER_USERNAME }}/student-go-api:v1.0.0
+                # tags: ${{ secrets.DOCKER_USERNAME }}/${{ github.event.repository.name }}:latest
