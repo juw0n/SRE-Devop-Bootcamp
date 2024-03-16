@@ -7,8 +7,8 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest # for github-hosted runner
-    # runs-on: ubuntu-latest # for self-hosted runner
+    # runs-on: ubuntu-latest # for github-hosted runner
+    runs-on: self-hosted # for self-hosted runner
     steps:
         -
             name: Checkout
