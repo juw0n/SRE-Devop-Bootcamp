@@ -94,4 +94,25 @@ To top the containers:
 Resources: 
 - https://docs.github.com/en/actions/learn-github-actions/understanding-github-actions#create-an-example-workflow
 
-The main focus of this module is to create a simple CI pipeline that will be used to build and push the project docker image to a central registry (I am using dockerhub).
+The main focus of this module is to create a simple CI pipeline that will be used to build and push the project docker image to a central registry (I am using dockerhub registry).
+
+
+After lauching the ec2 instance, for this project some dependencies needs to install to prepare the environment for runnig the github self-hosted runner. i will be installing docker and git on the instance
+
+copy and run the following code line by line to install docker:
+
+--> sudo apt update
+--> curl -fsSL https://get.docker.com -o get-docker.sh
+--> sudo chmod +x get-docker.sh
+--> sudo ./get-docker.sh
+--> sudo docker --version
+give the user the neccessary permission to e able to run docker command
+--> sudo usermod -aG docker $USER
+
+Optional: check docker command path
+--> which docker
+response ==> "/usr/bin/docker"
+
+Install Git using the following command:
+--> sudo apt install -y git
+--> git --version
