@@ -108,6 +108,7 @@ copy and run the following code line by line to install docker:
 --> sudo docker --version
 give the user the neccessary permission to e able to run docker command
 --> sudo usermod -aG docker $USER
+--> Logout and log back in again
 
 Optional: check docker command path
 --> which docker
@@ -119,4 +120,4 @@ Install Git using the following command:
 
 After preparing the environment for the self-hosted runner. go to the project repo on github to get and run the runner code on the machine youu want to use for the self-hosted runner. it is found in the setting tab -> Action -> Runner then click on New-self-hosted-runner.
 
-hmm, i am getting error now
+PS: Before running the running the runner ./run.sh command, make sure to logout and login again into the machine to validate the docker permission.
