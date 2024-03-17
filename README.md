@@ -119,4 +119,4 @@ Install Git using the following command:
 
 After preparing the environment for the self-hosted runner. go to the project repo on github to get and run the runner code on the machine youu want to use for the self-hosted runner. it is found in the setting tab -> Action -> Runner then click on New-self-hosted-runner.
 
-hmm, i am getting error now
+hmm, i am getting error nowm
