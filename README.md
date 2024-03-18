@@ -99,6 +99,8 @@ The main focus of this module is to create a simple CI pipeline that will be use
 
 After lauching the ec2 instance, for this project some dependencies needs to install to prepare the environment for runnig the github self-hosted runner. i will be installing docker and git on the instance
 
+PS: Ensure to give the neccessary permission on the ec2 instance to be able to connect and comminicate with github and docker. update the security group setting to http and https traffic.
+
 copy and run the following code line by line to install docker:
 
 --> sudo apt update
