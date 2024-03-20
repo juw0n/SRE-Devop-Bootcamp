@@ -18,19 +18,24 @@ PS: the same function and end points are made for courses and enrollment
 
 ### Project Setup
 1. Clone the repository:
+```
 git clone https://github.com/<your_username>/student-api.git
+```
 2. Install dependencies:
+```
 go mod download
+```
 3. Configure environment variables:
 Create app.env file in the project root directory and define any necessary environment variables (e.g., database connection details).
 
 Example:
 
-DB_URL=postgres://user:password@localhost:5432/student_db
+*DB_URL=postgres://user:password@localhost:5432/student_db*
 
 4. Build and run the API:
+```
 make run
-
+```
 ### Additional Features
 * API Versioning: Utilizes versioning prefix (/api/v1) for clarity and potential future changes.
 * HTTP Verbs: Employs appropriate HTTP verbs (POST, GET, PUT, DELETE) for specific operations.
@@ -38,29 +43,36 @@ make run
 * Health Check: Provides a /healthcheck endpoint to verify API health.
 * Unit Tests: Includes unit tests for various API endpoints using the gomock framework.
 
-PS: I'm yet to complete the unit test for the api endpoint. I think i need collaboration on that. I am using gomock to mock the Db and make the test independent of the main DB.
+**PS: I'm yet to complete the unit test for the api endpoint. I think i need collaboration on that. I am using gomock to mock the Db and make the test independent of the main DB.**
 
 ### Resources
-Database schema designed using https://app.diagrams.net/
-Configuration management with https://github.com/spf13/viper
+Database schema designed using [https://app.diagrams.net/]
+Configuration management with [https://github.com/spf13/viper]
 This project serves as a foundation for building and testing basic CRUD APIs using Golang and Gin. Feel free to explore and extend it further based on your specific requirements.
 
 ### 2 - Containerise REST API (Building and Running a Docker Container)
 Docker is used to containerized the API application. To build the image using docker:
 * Building the Docker Image
 1. Clone this repository to your local machine:
+```
 git clone https://github.com/your_username/project_name.git
+```
 2. Navigate to the project directory:
+```
 cd project_name
+```
 3. Build the Docker image using the provided Dockerfile:
+```
 docker build -t project_name .
+```
 
 ##### PS: Replace project_name with your desired image name.
 
 * Running the Docker Container
 1. Once the Docker image is built, you can run a container using the following command:
+```
 docker run --name container_name -p host_port:container_port project_name
-
+```
 Replace:
 
 * container_name with your desired container name.
@@ -69,27 +81,33 @@ Replace:
 * project_name with the name of the Docker image you built earlier.
 
 2. Access your application in a web browser or through API calls using:
-* localhost:host_port.
+```
+localhost:host_port.
+```
 
 ### To stop and remove a running container, use:
-* docker rm -f container_name
+```
+docker rm -f container_name
+```
 To remove the Docker image, use:
-* docker rmi project_name
-
-### Milestone 3 --> Setup one-click local development setup
+```
+docker rmi project_name
+```
+## Milestone 3 --> Setup one-click local development setup
 
 On the basis that the team is familiar with the development environment and have all the required tools (Docker, Docker Compose, Make) on their locall machine,depending on the OS each team member is using. This milestone simplify the process of setting up the API on a local machine.
 The process of developing and deploying the project have been streamlined using docker compose for defining and running the API and database container. the setup is done the right order where the database is start and ready before the API container is spinned up.
 
 Upon cloning the project repo to your local make, run the following code/script to start the application:
-
---> make start_db
---> make run_api
-
+```
+make start_db
+make run_api
+```
 To top the containers:
---> make stop_api
-
-### Milestone 4 --> Setup a CI pipeline
+```
+make stop_api
+```
+## Milestone 4 --> Setup a CI pipeline
 
 Resources: 
 - https://docs.github.com/en/actions/learn-github-actions/understanding-github-actions#create-an-example-workflow
@@ -102,24 +120,35 @@ After lauching the ec2 instance, for this project some dependencies needs to ins
 PS: Ensure to give the neccessary permission on the ec2 instance to be able to connect and comminicate with github and docker. update the security group setting to http and https traffic.
 
 copy and run the following code line by line to install docker:
-
---> sudo apt update
---> curl -fsSL https://get.docker.com -o get-docker.sh
---> sudo chmod +x get-docker.sh
---> sudo ./get-docker.sh
---> sudo docker --version
+```
+sudo apt update
+curl -fsSL https://get.docker.com -o get-docker.sh
+sudo chmod +x get-docker.sh
+sudo ./get-docker.sh
+sudo docker --version
+```
 give the user the neccessary permission to e able to run docker command
---> sudo usermod -aG docker $USER
---> Logout and log back in again
+```
+sudo usermod -aG docker $USER
+```
+```
+Logout and log back in again
+```
 
 Optional: check docker command path
---> which docker
+```
+which docker
+```
 response ==> "/usr/bin/docker"
 
 Install Git using the following command:
---> sudo apt install -y git
---> git --version
+```
+sudo apt install -y git
+git --version
+```
 
 After preparing the environment for the self-hosted runner. go to the project repo on github to get and run the runner code on the machine youu want to use for the self-hosted runner. it is found in the setting tab -> Action -> Runner then click on New-self-hosted-runner.
 
 PS: Before running the running the runner ./run.sh command, make sure to logout and login again into the machine to validate the docker permission.
+
+## Milestone 5 --> Deploy REST API & its dependent services on bare metal
