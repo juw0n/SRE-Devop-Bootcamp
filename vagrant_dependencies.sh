@@ -43,4 +43,4 @@ echo -e "\e[0;36m-------------------------------------------------\e[0m"
 
 sudo usermod -aG docker $USER
 
-echo -e "\e[0;36mLogout and Login again after the bootup\e[0m"
+echo -e "\e[0;36mLogout and Login again after the VM bootup\e[0m"

@@ -54,4 +54,6 @@ run_api: start_db
 stop_api:
 	docker compose down
 
+
+
 .PHONY: pull_postgres postgres create_user create_db drop_db migrate_up migrate_down migrate_fix sqlc test server mock build run_api start_db run_api stop_api
