@@ -154,5 +154,11 @@ PS: Before running the running the runner ./run.sh command, make sure to logout 
 ## Milestone 5 --> Deploy REST API & its dependent services on bare metal
 ![vagrant-deployment](https://github.com/juw0n/SRE-Devop-Bootcamp/assets/45376257/1cdb15aa-1cdc-4485-92d6-37a897d18dbc)
 
+In this milestone, I deployed the REST API & its dependent services on bare metal using vagrant to provisioned a Virtual machine(VM) running Ubuntu on Oracle VM Virtualbox.
+I automated the provisioning of the Virtual Machine(VM) using vagrantfile that also install the basic dependencies packages for the project. For setting up the Vagrant box I used a bash script with functions to install the required dependencies. I updated the docker-compose file and Makefile to do the deployment and the final setup should consist of:
+* 2 API containers
+* 1 DB container
+* 1 Nginx container
 
-
+as shown in the diagram above.
+The Nginx was used for load balancing between these two API containers. Internally the Nginx was set to load balance requests between two API containers and is accessible via port 8084. (I had issues accessing the api on my local machine from port 8080, it doesn't matter though)
