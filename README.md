@@ -161,4 +161,10 @@ I automated the provisioning of the Virtual Machine(VM) using vagrantfile that a
 * 1 Nginx container
 
 as shown in the diagram above.
-The Nginx was used for load balancing between these two API containers. Internally the Nginx was set to load balance requests between two API containers and is accessible via port 8084. (I had issues accessing the api on my local machine from port 8080, it doesn't matter though)
+The Nginx was used for load balancing between these two API containers. Internally the Nginx was set to load balance requests between two API containers and is accessible via port 8084. (I had issues accessing the api on my local machine from port 8080, it doesn't matter though).
+
+Resources:
+* [Vagrant Documentation](https://developer.hashicorp.com/vagrant/docs)
+* [Deploying Nginx using Docker](https://docs.nginx.com/nginx/admin-guide/installing-nginx/installing-nginx-docker/)
+
+## Milestone 6 --> Setup Kubernetes cluster
