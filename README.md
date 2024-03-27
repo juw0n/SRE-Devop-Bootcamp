@@ -152,3 +152,7 @@ After preparing the environment for the self-hosted runner. go to the project re
 PS: Before running the running the runner ./run.sh command, make sure to logout and login again into the machine to validate the docker permission.
 
 ## Milestone 5 --> Deploy REST API & its dependent services on bare metal
+![vagrant-deployment](https://github.com/juw0n/SRE-Devop-Bootcamp/assets/45376257/1cdb15aa-1cdc-4485-92d6-37a897d18dbc)
+
+
+
