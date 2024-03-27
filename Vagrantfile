@@ -5,5 +5,5 @@ Vagrant.configure("2") do |config|
         shell.path = "./vagrant_dependencies.sh"
     end
     # Forwarding port 80
-    config.vm.network :forwarded_port, guest: 80, host: 80
+    config.vm.network :forwarded_port, guest: 8080, host: 8084
 end
