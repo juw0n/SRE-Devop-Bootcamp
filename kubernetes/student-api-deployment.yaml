@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: student-api-ns
+  name: student-api-deployment
+  labels:
+    app: student-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: student-api-app
+  template:
+    metadata:
+      labels:
+        name: student-api
+        app: student-api-app
+    spec:
+      nodeSelector:
+        application: application-node
+      containers:
+      - name: student-api-app
+        image: juw0n/student-go-api:v1.0.0
+        ports:
+        - containerPort: 8080

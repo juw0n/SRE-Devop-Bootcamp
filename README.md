@@ -168,3 +168,29 @@ Resources:
 * [Deploying Nginx using Docker](https://docs.nginx.com/nginx/admin-guide/installing-nginx/installing-nginx-docker/)
 
 ## Milestone 6 --> Setup Kubernetes cluster
+
+The expectation of this milestone is to setup a 3 node kubernetes cluster using Minikube. the nodes are then to be appropriately lablled as:
+=> Node A: type=application
+=> Node B: type=dependent_services
+=> Node C: type=observability.
+
+After studing [Minikube Docs](https://minikube.sigs.k8s.io/docs/start/) and following the getting-started-guide, I was able to install minikube and kubectl to manage the cluster. I also learn the basic of kubernete and its' commands also following some parts of it's [Documentation](https://kubernetes.io/docs/home/).
+
+Some highlight of the learnt commands that i used:
+1. Starting the Cluster:
+==> minikube start --driver=kvm2 --nodes 3 -p sre-project
+2. Verify cluster status:
+==> minikube status -p sre-project
+3. List nodes:
+==> kubectl get node -o wide
+==> kubectl get nodes --show-labels
+4. Label worker nodes:
+* Label application node
+kubectl label node <node-name> application=application-node
+* Label database node
+kubectl label node <node-name> database=database-node
+* Label dependent-services node
+kubectl label node <node-name> service=dependent-services
+etc
+
+## Milestone 7 --> Deploy REST API & its dependent services in K8s

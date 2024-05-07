@@ -1,0 +1,56 @@
+1. Starting the Cluster:
+==> minikube start --driver=kvm2 --nodes 3 -p sre-project
+
+2. Verify cluster status:
+==> minikube status -p sre-project
+
+3. List nodes:
+==> kubectl get nodes
+==> kubectl get node -o wide
+==> kubectl get nodes --show-labels
+
+4. Label worker nodes:
+==> kubectl label nodes <node-name> node-role=application
+
+# Label application node
+kubectl label node <node-name> application=application-node
+
+# Label database node
+kubectl label node <node-name> database=database-node
+
+# Label dependent-services node
+kubectl label node <node-name> service=dependent-services
+
+6. List nodes with labels:
+==> kubectl get nodes --show-labels
+
+7. Stop running cluster
+==> minikube stop -p sre-project
+
+8. Delete the cluster
+==> minikube delete -p sre-project
+
+9. inspect the available namespaces by 
+==> kubectl get namespaces
+
+10. list all of the namespaces in our cluster:
+==> kubectl get namespaces --show-labels
+
+11. To set the namespace for a current request, use the --namespace flag.
+==> kubectl get pods --namespace=<insert-namespace-name-here>
+
+
+kubectl expose pod student-api --type=NodePort --port=8080
+
+
+-----
+I encoded the k8s manifest secret to base64 using terminal
+==> echo -n "schooluser" | base64
+==> echo -n "school123" | base64
+==> echo -n "studentdb" | base64
+
+### Persistance volume are not namespaced i.e they are not tie to a namespace
+but pvc can be in a namespace.
+
+* I create the hostPath directory with:
+=> sudo mkdir -p /data/postgresData

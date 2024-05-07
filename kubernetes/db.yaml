@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: student-api-ns
+  name: postgres-db-deployment
+  labels:
+    app: postgres-db-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres-db-app
+  template:
+    metadata:
+      labels:
+        app: postgres-db-app
+    spec:
+      containers:
+      - name: postgres-db
+        image: postgres:16.2-alpine3.18
+        ports:
+        - containerPort: 5432
+        volumeMounts:
+        - name: postgres-pvc
+          mountPath: /var/lib/postgresql/data
+        - name: config-volume
+          mountPath: /etc/postgres
+        - name: secret-volume
+          mountPath:/path/to/secret-volume
+      volumes:
+      - name: postgres-pvc
+        persistentVolumeClaim:
+          claimName: postgres-pvc
+      - name: config-volume
+        ConfigMap:
+          name: postgres-config
+      - name: secret-volume
+        secret:
+          secretName: postgres-secret
