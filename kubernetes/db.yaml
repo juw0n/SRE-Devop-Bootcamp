@@ -15,9 +15,14 @@ spec:
       labels:
         app: postgres-db-app
     spec:
+      nodeSelector:
+        database: "database-node"
       containers:
       - name: postgres-db
         image: postgres:16.2-alpine3.18
+        env:
+        - name: POSTGRES_PASSWORD
+          value: "postgres123"
         ports:
         - containerPort: 5432
         volumeMounts:
@@ -26,13 +31,13 @@ spec:
         - name: config-volume
           mountPath: /etc/postgres
         - name: secret-volume
-          mountPath:/path/to/secret-volume
+          mountPath: /var/run/secrets/postgres
       volumes:
       - name: postgres-pvc
         persistentVolumeClaim:
           claimName: postgres-pvc
       - name: config-volume
-        ConfigMap:
+        configMap:
           name: postgres-config
       - name: secret-volume
         secret:

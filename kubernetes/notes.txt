@@ -54,3 +54,11 @@ but pvc can be in a namespace.
 
 * I create the hostPath directory with:
 => sudo mkdir -p /data/postgresData
+
+-------------------------------------------------------------------
+May 08th
+After creating and deploying the postgresDB, PV, PVC, ConfigMap and Secret i connect to the default db using
+==> kubectl exec -it <name of deployment> bash --namespace=student-api-ns
+==> psql -h localhost -U schooluser -p 5432 postgres 
+                        OR
+    psql -h localhost -U schooluser -p 5432 studentdb
