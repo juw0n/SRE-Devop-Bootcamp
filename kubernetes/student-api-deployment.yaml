@@ -21,5 +21,31 @@ spec:
       containers:
       - name: student-api-app
         image: juw0n/student-go-api:v1.0.0
+        env:
+        - name: DB_DRIVER
+          valueFrom:
+            configMapKeyRef:
+              name: postgres-config
+              key: DB_DRIVER
+        - name: DB_SOURCE
+          valueFrom:
+            configMapKeyRef:
+              name: postgres-config
+              key: DB_SOURCE
+        - name: POSTGRES_DB
+          valueFrom:
+            secretKeyRef:
+              name: postgres-secret
+              key: POSTGRES_DB        
+        - name: POSTGRES_USER
+          valueFrom:
+            secretKeyRef:
+              name: postgres-secret
+              key: POSTGRES_USER
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: postgres-secret
+              key: POSTGRES_PASSWORD
         ports:
         - containerPort: 8080

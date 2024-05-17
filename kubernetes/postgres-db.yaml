@@ -49,6 +49,8 @@ kind: Service
 metadata:
   namespace: student-api-ns
   name: postgres-service
+  labels:
+    name: postgres-db-service
 spec:
   selector:
     app: postgres-db-app

@@ -5,4 +5,4 @@ metadata:
   name: postgres-config
 data:
   DB_DRIVER: postgres
-  DB_SOURCE: postgresql://schooluser:school123@localhost:5432/studentdb?sslmode=enable
+  DB_SOURCE: postgresql://schooluser:school123@postgres-service:5432/studentdb?sslmode=disable

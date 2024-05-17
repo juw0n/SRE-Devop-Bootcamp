@@ -1,6 +1,15 @@
 1. Starting the Cluster:
 ==> minikube start --driver=kvm2 --nodes 3 -p sre-project
 
+List of profile
+==> minikube profile list
+
+set the current profile to p1
+==> minikube profile <profile-name>
+
+ delete profile p1
+==> minikube delete -p <profile-name>
+
 2. Verify cluster status:
 ==> minikube status -p sre-project
 
@@ -58,7 +67,11 @@ but pvc can be in a namespace.
 -------------------------------------------------------------------
 May 08th
 After creating and deploying the postgresDB, PV, PVC, ConfigMap and Secret i connect to the default db using
-==> kubectl exec -it <name of deployment> bash --namespace=student-api-ns
+==> kubectl exec -it <pod-name> --namespace=student-api-ns -- bash
+
 ==> psql -h localhost -U schooluser -p 5432 postgres 
                         OR
     psql -h localhost -U schooluser -p 5432 studentdb
+
+check for logs
+==> kubectl logs <pod-name> -n student-api-ns
