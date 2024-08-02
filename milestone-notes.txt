@@ -224,7 +224,7 @@ Check ruuning external-secrets pods
 
 4. Create Generic token: Create the Vault token secret to be used in the created SecretStore
 kubectl create secret generic vault-token --from-literal=token=<YOUR_VAULT_TOKEN> -n <namespace>
-==> kubectl create secret generic vault-token -n student-api-ns --from-literal=token=hvs.K7dh5d5kDrmMbouGLQAxV02v
+==> kubectl create secret generic vault-token -n student-api-ns --from-literal=token=<VAULT_TOKEN>
 ==> kubectl get secrets -n student-api-ns
 ==> kubectl get secret vault-token -n student-api-ns -o yaml
 ** To get it in JSON format:

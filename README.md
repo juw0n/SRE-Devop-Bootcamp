@@ -300,7 +300,7 @@ d. Check the service name of the role
 #### This is the method that work for me at this time
 Create Generic token: Create the Vault token secret to be used in the created SecretStore
 kubectl create secret generic vault-token --from-literal=token=<YOUR_VAULT_TOKEN> -n <namespace>
-==> kubectl create secret generic vault-token -n student-api-ns --from-literal=token=hvs.K7dh5d5kDrmMbouGLQAxV02v
+==> kubectl create secret generic vault-token -n student-api-ns --from-literal=token=<VAULT_TOKEN>
 
 6. Exit the vault-0 pod.
 ==> exit
