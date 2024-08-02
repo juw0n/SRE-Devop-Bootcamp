@@ -1,0 +1,28 @@
+---
+- name: Install Vault Helm chart
+  hosts: localhost
+  become: yes
+  tasks:
+    - name: Add HashiCorp Helm repository
+      command: helm repo add hashicorp https://helm.releases.hashicorp.com
+      register: helm_repo_add
+      failed_when: "'Error' in helm_repo_add.stderr"
+      changed_when: "'already exists' not in helm_repo_add.stdout"
+
+    - name: Update Helm repositories
+      command: helm repo update
+      register: helm_repo_update
+
+    - name: List Helm repositories
+      command: helm repo list
+      register: helm_repo_list
+
+    - name: Search for Vault chart in HashiCorp repository
+      command: helm search repo hashicorp/vault
+      register: helm_search_vault
+
+    - name: Install Vault Helm chart
+      command: helm install vault hashicorp/vault --namespace vault-ns -f vault-values.yaml
+      register: helm_install_vault
+      failed_when: "'Error' in helm_install_vault.stderr"
+      changed_when: "'Already exists' in helm_install_vault.stdout"

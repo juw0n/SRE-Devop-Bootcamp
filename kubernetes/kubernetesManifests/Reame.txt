@@ -1,0 +1,4 @@
+for the bash scripts:
+1. cd to the script directory
+2. Make the script executable: chmod +x script-name.sh
+3. Run the script: ./script-name.sh

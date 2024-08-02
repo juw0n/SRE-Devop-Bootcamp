@@ -1,0 +1,9 @@
+nodeSelector:
+  service: dependent-services-node
+  type: dependent-services-node
+
+# tolerations:
+#   - key: "service"
+#     operator: "Equal"
+#     value: "dependent-service-node"
+#     effect: "NoSchedule"

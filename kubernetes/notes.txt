@@ -1,51 +1,51 @@
 1. Starting the Cluster:
 ==> minikube start --driver=kvm2 --nodes 3 -p sre-project
+==> minikube start --driver=docker --nodes 3 -p sre-project
 
 List of profile
 ==> minikube profile list
+Verify cluster status:
+==> minikube status -p sre-project
 
 set the current profile to p1
 ==> minikube profile <profile-name>
 
- delete profile p1
-==> minikube delete -p <profile-name>
+Stop running cluster
+==> minikube stop -p sre-project
 
-2. Verify cluster status:
-==> minikube status -p sre-project
+Delete the cluster
+==> minikube delete -p <profile-name>
+==> minikube delete -p sre-project
 
 3. List nodes:
 ==> kubectl get nodes
 ==> kubectl get node -o wide
 ==> kubectl get nodes --show-labels
 
-4. Label worker nodes:
-==> kubectl label nodes <node-name> node-role=application
 
+4. Label worker nodes:
 # Label application node
 kubectl label node <node-name> application=application-node
+kubectl label node sre-project-m02 application=application-node
 
 # Label database node
 kubectl label node <node-name> database=database-node
+kubectl label node sre-project-m03 database=database-node
 
 # Label dependent-services node
 kubectl label node <node-name> service=dependent-services
+kubectl label node sre-project-m04 service=dependent-services
 
-6. List nodes with labels:
-==> kubectl get nodes --show-labels
+Verification of applied labels:
+==> kubectl get nodes <node_name> -o yaml
 
-7. Stop running cluster
-==> minikube stop -p sre-project
-
-8. Delete the cluster
-==> minikube delete -p sre-project
-
-9. inspect the available namespaces by 
+8. inspect the available namespaces by 
 ==> kubectl get namespaces
 
-10. list all of the namespaces in our cluster:
+9. list all of the namespaces in our cluster:
 ==> kubectl get namespaces --show-labels
 
-11. To set the namespace for a current request, use the --namespace flag.
+10. To set the namespace for a current request, use the --namespace flag.
 ==> kubectl get pods --namespace=<insert-namespace-name-here>
 
 
@@ -67,6 +67,7 @@ but pvc can be in a namespace.
 -------------------------------------------------------------------
 May 08th
 After creating and deploying the postgresDB, PV, PVC, ConfigMap and Secret i connect to the default db using
+
 ==> kubectl exec -it <pod-name> --namespace=student-api-ns -- bash
 
 ==> psql -h localhost -U schooluser -p 5432 postgres 
@@ -75,3 +76,143 @@ After creating and deploying the postgresDB, PV, PVC, ConfigMap and Secret i con
 
 check for logs
 ==> kubectl logs <pod-name> -n student-api-ns
+-----------------------------------------------------------------------
+
+May 20th
+Steps I took to implement the External Secret Operator using Hashicorp
+
+Step 1: Install Helm ==> https://helm.sh/docs/intro/install/
+    OR
+    curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+
+Step 2: Create a Namespace for Vault 
+==> kubectl create namespace vault-ns
+
+Step 3: Install Vault Using Helm:
+==> helm repo add hashicorp https://helm.releases.hashicorp.com
+==> helm repo update
+==> helm search repo hashicorp/vault
+==> helm install vault hashicorp/vault --namespace vault-ns -f vault-node.yaml -f vault-config.yaml
+incase of error and need to reapply
+==> helm upgrade --install vault hashicorp/vault --namespace vault-ns -f vault-node.yaml -f vault-config.yaml
+chek the running vault
+==> kubectl get all -n vault-ns
+
+To uninstall/remove the repo
+==> helm repo remove hashicorp
+
+Step 4: Configure Vault
+-- First, get the Vault Pod name: 
+==> kubectl get pods --namespace vault-ns
+==> kubectl get pods -n vault-ns -o wide
+
+-- Then, initialize Vault: 
+==> kubectl exec -ti <pod-name> -n <namespace> -- vault operator init
+==> kubectl exec -ti vault-0 -n vault-ns -- vault operator init
+
+** This command will output several unseal keys and a root token. Save these securely as you will need them to unseal the Vault and for administrative tasks. **
+then:
+    Unseal Vault with at least three of the five keys:
+    => kubectl exec -ti <vault-pod-name> -n <vault-namespace> -- vault operator unseal <unseal-key-1>
+    => kubectl exec -ti <vault-pod-name> -n <vault-namespace> -- vault operator unseal <unseal-key-2>
+    => kubectl exec -ti <vault-pod-name> -n <vault-namespace> -- vault operator unseal <unseal-key-3>
+    e.g
+kubectl exec -ti vault-0 -n vault-ns -- vault operator unseal zg925uV1/jpKoPml7eSNvBKXa5NlowJsL8iGBq7RqX5r
+-> until you get output that says "initialized: true & Sealed: false"
+
+Access Vault:
+Use the root token to authenticate and interact with Vault:
+==> kubectl exec -ti vault-0 -n vault-ns -- vault login <root_token>
+
+Enable a Secret Engine:
+==> kubectl exec -it vault-0 -- vault secrets enable -path=<path> <engine>
+--> kubectl exec -it vault-0 -n vault-ns -- vault secrets enable -path=secretdata kv
+
+Write Secrets:
+Write secrets to the enabled path:
+==> kubectl exec -it vault-0 -- vault kv put <path>/<secret-name> key1=value1 key2=value2
+
+kubectl exec -it vault-0 -n vault-ns -- vault kv put secretdata/postgresql POSTGRES_DB=studentdb POSTGRES_USER=schooluser POSTGRES_PASSWORD=school123
+
+Access Secrets:
+Retrieve secrets:
+kubectl exec -it vault-0 -- vault kv get <path>/<secret-name>
+==> kubectl exec -it vault-0 -n vault-ns -- vault kv get secretdata/postgresql
+
+Enable Kubernetes Auth Method:
+==> kubectl exec -ti vault-0 -n vault-ns -- vault auth enable kubernetes
+
+Configure the Kubernetes Auth Method:
+==> kubectl exec -ti vault-0 -n vault-ns -- vault write auth/kubernetes/config     kubernetes_host="https://$KUBERNETES_PORT_443_TCP_ADDR:443"
+
+
+Define the policy rules to allow the ESO to read and retrieve secrets stored in Vault:
+==> kubectl exec -it vault-0 -n vault-ns -- vault policy write external-secret-operator-policy -<<EOF
+path "secretdata/postgresql" {
+  capabilities = ["read"]
+}
+EOF
+
+Create a Role: A role binds policies and environment parameters together to create a login for the web application.
+==> kubectl exec -it vault-0 -n vault-ns -- vault write auth/kubernetes/role/my-role \
+    bound_service_account_names=<your-service-account-name> \
+    bound_service_account_namespaces=<your-namespace> \
+    policies=my-policy \
+    ttl=24h
+
+e.g
+==> kubectl exec -it vault-0 -n vault-ns -- vault write auth/kubernetes/role/api-app-role \
+    bound_service_account_names=vault \
+    bound_service_account_namespaces=vault-ns \
+    policies=external-secret-operator-policy \
+    ttl=24h
+
+
+##  Deploy External Secrets Operator (ESO)
+
+## Deploy External Secrets Operator (ESO)
+==> kubectl create namespace external-secrets-ns
+
+-- Install ESO using Helm:
+==> helm install external-secrets external-secrets/external-secrets -n external-secrets-ns -f vault-node.yaml
+
+
+-- before creating the clusterSecretStore or SecretStore resource, you should add your Vault token to your Kubernetes cluster. This token will be used for authentication when accessing secrets from HashiCorp Vault.
+==> kubectl create secret generic vault-token -n external-secrets-ns --from-literal=token=<your-vault-token>
+
+==> kubectl get secrets -n external-secrets-ns
+==> kubectl get all -n external-secrets-ns
+
+- Configure ESO to Use Vault: 
+Create a SecretStore resource that defines how ESO should interact with Vault:
+
+
+
++++++++++++++++++++++++++++++++++++=
+
+
+kubectl exec -it vault-0 -n vault-ns -- vault secrets enable -path=secretdata kv
+
+kubectl exec -it vault-0 -n vault-ns  -- vault kv put secretdata/<secret-name> key1=value1 key2=value2
+
+kubectl exec -it vault-0 -- vault kv put <path>/postgresql POSTGRES_DB=studentdb POSTGRES_USER=schooluser POSTGRES_PASSWORD=school123
+
+
+kubectl exec -it vault-0 -n vault-ns -- vault policy write external-secret-operator-policy -<<EOF
+path "secretdata/postgresql" {
+  capabilities = ["read"]
+}
+EOF
+
+
+kubectl exec -it vault-0 -n vault-ns -- vault token create -policy="external-secret-operator-policy"
+
+helm install external-secrets external-secrets/external-secrets -n external-secrets-ns -f vault-node.yaml
+
+
+
+
+
+
+
+-----sudo systemctl reload-or-restart vault----
