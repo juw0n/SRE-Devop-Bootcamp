@@ -1,0 +1,16 @@
+# DB Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.postgresService.name }}
+  namespace: {{ .Values.postgresService.namespace }}
+  labels:
+    name: {{ .Values.postgresService.labels.name }}
+spec:
+  selector:
+    app: {{ .Values.postgresService.selector.app }}
+  ports:
+    {{- range .Values.postgresService.ports }}
+    - port: {{ .port }}
+      targetPort: {{ .targetPort }}
+    {{- end }}

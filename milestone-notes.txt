@@ -235,6 +235,7 @@ kubectl create secret generic vault-token --from-literal=token=<YOUR_VAULT_TOKEN
 Apply the SecretStore configuration:
 ***First get and update the vault server address in the secretstote file before applying
 ==> kubectl get svc -n <vault-namespace>
+
 Then apply the eso CRD's:
 ==> kubectl apply -f secret-store.yaml
 ** Check the secretstore resource to confirm it is in ready Statement
@@ -279,3 +280,50 @@ Check all resource:
 
 check the init container:
 ==> kubectl logs <pod_name> -c init-db -n student-api-ns
+
+=========================================================================
+### Milestone 8 - Deploy REST API & its dependent services using Helm Charts
+
+Helm: is a tool that helps to manage applications running in Kubernetes. Think of it as a package manager for Kubernetes, similar to how the App Store or Google Play Store helps you manage applications on your phone. Helm simplifies the complex task of managing Kubernetes applications, making it easier to deploy, upgrade, and maintain them. it is one of the best way to find, share, and use software built for Kubernetes.
+
+When you're running applications in Kubernetes, you often need to deploy lots of different pieces (like databases, web servers, etc.) and configure them correctly. Helm simplifies this by allowing you to package all these pieces together and manage them as a single unit.
+
+The prerequisites required for a successful and properly secured use of Helm includes:
+1. A Kubernetes cluster -> Kubernetes 1.19+
+2. Kubectl installed and set up to use the cluster
+3. Installing and configuring Helm.
+
+* For this project i will start the k8s cluster and configure the vault and eso to prepare the cluster for the app deployment. (following some steps from milstone 7)
+
+Some helm Commands:
+To create a simple chart:
+==> helm create <chart-name/release-name>
+To check of the chart release is created
+==> helm list --all-namespaces
+To uninstall a release
+==> helm uninstall <chart-name>
+To retrieve the release and see the actual template that was loaded.
+==> helm get manifest <chart-name>
+When you want to test the template rendering, but not actually install anything, you can use 
+==> helm install --debug --dry-run <chart-name> ./mychart
+
+Steps -->
+Step 1: Create a kubernetes cluster
+Step 2: Label nodes and create the 3 namespaces
+Step 3: Deploy Hashicorp vault and configure it using helm
+Step 4: Deploy external-secrets-operator using helm
+Step 5: Create a folder structure for the hel chart
+Step 6: Starts the creation of the chart or release in the appropriate folder
+a. ==> helm create vault/vault-eso
+We will not need generated files inside ./templates folder, so remove them and also clear all the content inside values.yaml.
+
+From the generate files in helm template directory
+==> rm -rf vault/vault-eso/templates/*
+To Install, navigate the repo that contain the chart files i.e cd /helm/vault/vault-eso
+==> helm install my-eso . -n student-api-ns
+
+b. ==> helm create db/postgredb
+To Install, navigate the repo that contain the chart files i.e cd /helm/vault/vault-eso
+==> helm install my-postgresdb . -n student-api-ns
+
+c. ==> helm create api/student-api-app

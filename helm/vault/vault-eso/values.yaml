@@ -1,0 +1,66 @@
+# Default values for vault-eso.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+dbSecretStore:
+  name: vault-backend
+  namespace: student-api-ns
+  vault:
+    server: "http://10.96.77.45:8200"
+    path: "secretdata"
+    version: "v2"
+    auth:
+      tokenSecretRef:
+        name: vault-token
+        key: token
+
+apiSecretStore:
+  name: api-backend
+  namespace: student-api-ns
+  vault:
+    server: "http://10.96.77.45:8200"
+    path: "apidata"
+    version: "v2"
+    auth:
+      tokenSecretRef:
+        name: vault-token
+        key: token
+
+dbExternalSecretStore:
+  name: postgres-secrets
+  namespace: student-api-ns
+  refreshInterval: "1h"
+  secretStoreRef:
+    name: vault-backend
+    kind: SecretStore
+  target:
+    name: postgres-credential
+    creationPolicy: Owner
+  data:
+    POSTGRES_USER:
+      key: secretdata/data/postgresql
+      property: POSTGRES_USER
+    POSTGRES_PASSWORD:
+      key: secretdata/data/postgresql
+      property: POSTGRES_PASSWORD
+    POSTGRES_DB:
+      key: secretdata/data/postgresql
+      property: POSTGRES_DB
+  
+apiExternalSecretStore:
+  name: api-secrets
+  namespace: student-api-ns
+  refreshInterval: "1h"
+  secretStoreRef:
+    name: api-backend
+    kind: SecretStore
+  target:
+    name: api-credential
+    creationPolicy: Owner
+  data:
+    DB_DRIVER:
+      key: apidata/data/studentapi
+      property: DB_DRIVER
+    DB_SOURCE:
+      key: apidata/data/studentapi
+      property: DB_SOURCE

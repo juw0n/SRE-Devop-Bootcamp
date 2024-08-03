@@ -1,0 +1,65 @@
+# Default values for student-api-app.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+replicas: 1
+
+studentApiDeployment:
+  namespace: student-api-ns
+  name: student-api-deployment
+  labels:
+    app: student-api
+  matchLabels:
+    app: student-api-app
+  nodeSelector:
+    application: application-node
+  initContainer:
+    name: init-db
+    image: postgres:16.2-alpine3.18
+    env:
+      POSTGRES_USER:
+        secretName: postgres-credential
+        secretKey: POSTGRES_USER
+      POSTGRES_PASSWORD:
+        secretName: postgres-credential
+        secretKey: POSTGRES_PASSWORD
+      POSTGRES_DB: postgres
+      PGPASSWORD:
+        secretName: postgres-credential
+        secretKey: POSTGRES_PASSWORD
+  container:
+    name: student-api-app
+    image: juw0n/student-go-api:v1.0.0
+    env:
+      DB_DRIVER:
+        secretName: api-credential
+        secretKey: DB_DRIVER
+      DB_SOURCE:
+        secretName: api-credential
+        secretKey: DB_SOURCE
+      POSTGRES_DB:
+        secretName: postgres-credential
+        secretKey: POSTGRES_DB
+      POSTGRES_USER:
+        secretName: postgres-credential
+        secretKey: POSTGRES_USER
+      POSTGRES_PASSWORD:
+        secretName: postgres-credential
+        secretKey: POSTGRES_PASSWORD
+    ports:
+      containerPort: 8000
+
+studentApiService:
+  namespace: student-api-ns
+  name: student-api-service
+  labels:
+    name: student-api-service
+  selector:
+    app: student-api-app
+  ports:
+    port: 8000
+    targetPort: 8000
+    nodePort: 30100
+  type: NodePort
