@@ -1,0 +1,87 @@
+# Deployment for student API
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: {{ .Values.studentApiDeployment.namespace }}
+  name: {{ .Values.studentApiDeployment.name }}
+  labels:
+    app: {{ .Values.studentApiDeployment.labels.app }}
+spec:
+  replicas: {{ .Values.replicas }}
+  selector:
+    matchLabels:
+      app: {{ .Values.studentApiDeployment.matchLabels.app }}
+  template:
+    metadata:
+      labels:
+        name: {{ .Values.studentApiDeployment.labels.app }}
+        app: {{ .Values.studentApiDeployment.matchLabels.app }}
+    spec:
+      nodeSelector:
+        application: {{ .Values.studentApiDeployment.nodeSelector.application }}
+
+      initContainers:
+      - name: {{ .Values.studentApiDeployment.initContainer.name }}
+        image: {{ .Values.studentApiDeployment.initContainer.image }}
+        env:
+        - name: POSTGRES_USER
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.studentApiDeployment.initContainer.env.POSTGRES_USER.secretName }}
+              key: {{ .Values.studentApiDeployment.initContainer.env.POSTGRES_USER.secretKey }}
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.studentApiDeployment.initContainer.env.POSTGRES_PASSWORD.secretName }}
+              key: {{ .Values.studentApiDeployment.initContainer.env.POSTGRES_PASSWORD.secretKey }}
+        - name: POSTGRES_DB
+          value: {{ .Values.studentApiDeployment.initContainer.env.POSTGRES_DB }}
+        - name: PGPASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.studentApiDeployment.initContainer.env.PGPASSWORD.secretName }}
+              key: {{ .Values.studentApiDeployment.initContainer.env.PGPASSWORD.secretKey }}
+        command:
+        - sh
+        - -c
+        - |
+          until psql -h postgres-service -U "$POSTGRES_USER" -c "select 1"; do
+            echo "Waiting for postgres"
+            sleep 2
+          done
+          psql -v ON_ERROR_STOP=1 -h postgres-service --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-EOSQL
+            CREATE DATABASE studentdb;
+            GRANT ALL PRIVILEGES ON DATABASE studentdb TO "$POSTGRES_USER";
+          EOSQL
+
+      containers:
+      - name: {{ .Values.studentApiDeployment.container.name }}
+        image: {{ .Values.studentApiDeployment.container.image }}
+        env:
+        - name: DB_DRIVER
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.studentApiDeployment.container.env.DB_DRIVER.secretName }}
+              key: {{ .Values.studentApiDeployment.container.env.DB_DRIVER.secretKey }}
+        - name: DB_SOURCE
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.studentApiDeployment.container.env.DB_SOURCE.secretName }}
+              key: {{ .Values.studentApiDeployment.container.env.DB_SOURCE.secretKey }}
+        - name: POSTGRES_DB
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.studentApiDeployment.container.env.POSTGRES_DB.secretName }}
+              key: {{ .Values.studentApiDeployment.container.env.POSTGRES_DB.secretKey }}
+        - name: POSTGRES_USER
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.studentApiDeployment.container.env.POSTGRES_USER.secretName }}
+              key: {{ .Values.studentApiDeployment.container.env.POSTGRES_USER.secretKey }}
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.studentApiDeployment.container.env.POSTGRES_PASSWORD.secretName }}
+              key: {{ .Values.studentApiDeployment.container.env.POSTGRES_PASSWORD.secretKey }}
+        ports:
+        - containerPort: {{ .Values.studentApiDeployment.container.ports.containerPort }}

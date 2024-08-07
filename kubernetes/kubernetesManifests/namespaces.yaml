@@ -1,0 +1,23 @@
+# Hashicorp Vault Namespace
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: vault-ns
+  labels:
+    name: vault-ns
+---
+# External Secrets Operator Namespace
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: external-secrets-ns
+  labels:
+    name: external-secrets-ns
+---
+# Student API Namespace
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: student-api-ns
+  labels:
+    name: student-api-ns

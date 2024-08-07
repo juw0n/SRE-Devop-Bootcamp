@@ -1,0 +1,31 @@
+---
+- name: Deploy External Secrets Operator (ESO)
+  hosts: localhost
+  become: yes
+  tasks:
+    - name: Add External Secrets Helm repository
+      command: helm repo add external-secrets https://charts.external-secrets.io
+      register: helm_repo_add
+      failed_when: "'Error' in helm_repo_add.stderr"
+      changed_when: "'already exists' not in helm_repo_add.stdout"
+
+    - name: Update Helm repositories
+      command: helm repo update
+      register: helm_repo_update
+
+    - name: Search for ESO chart in External Secrets repository
+      command: helm search repo external-secrets/external-secrets
+      register: helm_search_eso
+
+    - name: List Helm repositories
+      command: helm repo list
+      register: helm_repo_list
+
+    - name: Install External Secrets Operator
+      command: >
+        helm install external-secrets external-secrets/external-secrets
+        --namespace external-secrets-ns
+        -f eso-node-values.yaml
+      register: helm_install_eso
+      failed_when: "'Error' in helm_install_eso.stderr"
+      changed_when: "'Already exists' in helm_install_eso.stdout"

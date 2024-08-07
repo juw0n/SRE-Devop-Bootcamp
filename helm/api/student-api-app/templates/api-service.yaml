@@ -1,0 +1,17 @@
+# Service for student API
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: {{ .Values.studentApiService.namespace }}
+  name: {{ .Values.studentApiService.name }}
+  labels:
+    name: {{ .Values.studentApiService.labels.name }}
+spec:
+  selector:
+    app: {{ .Values.studentApiService.selector.app }}
+  ports:
+    - protocol: TCP
+      port: {{ .Values.studentApiService.ports.port }}
+      targetPort: {{ .Values.studentApiService.ports.targetPort }}
+      nodePort: {{ .Values.studentApiService.ports.nodePort }}
+  type: {{ .Values.studentApiService.type }}

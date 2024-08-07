@@ -1,3 +1,4 @@
+# API deployment and init container for creating studentdb database
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -84,3 +85,22 @@ spec:
               key: POSTGRES_PASSWORD
         ports:
         - containerPort: 8000
+
+# api service
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: student-api-ns
+  name: student-api-service
+  labels:
+    name: student-api-service
+spec:
+  selector:
+    app: student-api-app
+  ports:
+  - protocol: TCP
+    port: 8000
+    targetPort: 8000
+    nodePort: 30100
+  type: NodePort

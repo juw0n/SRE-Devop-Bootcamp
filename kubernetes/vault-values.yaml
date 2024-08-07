@@ -1,0 +1,31 @@
+server:
+    affinity: |
+      nodeAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+          nodeSelectorTerms:
+            - matchExpressions:
+                - key: service
+                  operator: In
+                  values:
+                    - dependent-services-node
+    tolerations: |
+      - key: "service"
+        operator: "Equal"
+        value: "dependent-service-node"
+        effect: "NoSchedule"
+    ha:
+      enabled: true
+      raft:
+        enabled: true
+        setNodeId: true
+        config: |
+          cluster_name = "vault-cluster"
+          storage "raft" {
+            path = "/vault/data"
+          }
+          listener "tcp" {
+            address = "0.0.0.0:8200"
+            cluster_address = "0.0.0.0:8201"
+            tls_disable = true
+          }
+          service_registration "kubernetes" {}

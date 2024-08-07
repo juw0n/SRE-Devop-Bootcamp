@@ -1,0 +1,70 @@
+# Default values for postgredb.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+# Persistent Volume
+persistentVolume:
+  name: postgres-pv
+  namespace: student-api-ns
+  capacity:
+    storage: 3Gi
+  accessModes:
+    - ReadWriteOnce
+  reclaimPolicy: Recycle
+  hostPath: /data/postgresData
+
+# Persistent Volume Claim
+persistentVolumeClaim:
+  name: postgres-pvc
+  namespace: student-api-ns
+  resources:
+    requests:
+      storage: 3Gi
+  accessModes:
+    - ReadWriteOnce
+
+# DB Service
+postgresService:
+  name: postgres-service
+  namespace: student-api-ns
+  labels:
+    name: postgres-db-service
+  selector:
+    app: postgres-db-app
+  ports:
+  - port: 5432
+    targetPort: 5432
+
+# Postgres DB Deployment
+postgresDB:
+  name: postgres-db-deployment
+  namespace: student-api-ns
+  labels:
+    app: postgres-db-app
+  replicas: 1
+  nodeSelector:
+    database: database-node
+  containers:
+    name: postgres-db
+    image: postgres:16.2-alpine3.18
+    env:
+      POSTGRES_USER:
+        secretName: postgres-credential
+        secretKey: POSTGRES_USER
+      POSTGRES_PASSWORD:
+        secretName: postgres-credential
+        secretKey: POSTGRES_PASSWORD
+    ports:
+      containerPort: 5432
+    volumeMounts:
+      name: postgres-pvc
+      mountPath: /var/lib/postgresql/data
+  volumes:
+    name: postgres-pvc
+    persistentVolumeClaim:
+      claimName: postgres-pvc
+  
+
+  

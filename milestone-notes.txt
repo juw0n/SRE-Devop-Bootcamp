@@ -1,0 +1,329 @@
+# Milestone 6 - Setup Kubernetes cluster
+=========================================================================
+## Problem Statement
+We need to spin up a three-node Kubernetes cluster using Minikube on your local. Going forward we will treat this Kubernetes cluster as our production cluster. 
+Out of these three nodes
+** Node A will be used by our application.
+** Node B will be used for running dependent services.
+** Node C will be used for running our observability stack.
+
+*************************************************************************
+Start the Three-Node Cluster
+==> minikube start --driver=kvm2 --nodes 3 -p <name-of-cluster>
+    minikube start --driver=kvm2 --nodes 3 -p sre-project
+
+Verify Cluster Status
+==> minikube status -p <name-of-cluster>
+    minikube status -p sre-project
+(Optional) Access the Cluster dashboard to visualize its resources.
+==> minikube dashboard -p <name-of-cluster>
+    minikube dashboard -p sre-project
+==> kubectl get nodes
+==> kubectl get node -o wide
+==> kubectl get nodes --show-labels
+==> kubectl describe nodes
+
+Label the Nodes
+==> kubectl label node sre-project type=dependent-services-node
+==> kubectl label node sre-project-m02 type=database-node
+==> kubectl label node sre-project-m03 type=application-node
+
+OR
+Using a key-value
+==> kubectl label node sre-project application=application-node
+==> kubectl label node sre-project-m02 database=database-node
+==> kubectl label node sre-project-m03 application=application-node
+
+Verify the labels have been applied successfully:
+==> kubectl get nodes -l type
+==> kubectl get nodes --show-labels
+
+details for a specific node,
+==> kubectl label --list nodes node_name
+
+Confirm node labelling using grep:
+==> kubectl label --list nodes node-name | grep -i label-key
+
+overwrite the node label
+==> kubectl label --overwrite nodes node-name key=new-value
+
+To remove the label from a node, provide the key without any value.
+==> kubectl label --overwrite nodes node-name key-
+
+OR Taint the nodes:
+==> kubectl taint nodes sre-project service=dependent-services-node:NoSchedule
+==> kubectl taint nodes sre-project-m02 database=database-node:NoSchedule
+==> kubectl taint nodes sre-project-m03 application=application-node:NoSchedule
+
+verify that taint was successfully applied:
+==> kubectl describe node <node-name>
+
+Stop running cluster
+==> minikube stop -p <profile-name>
+==> minikube stop -p sre-project
+
+Delete the cluster
+==> minikube delete -p <profile-name>
+==> minikube delete -p sre-project
+=========================================================================
+### Milestone 7 - Deploy REST API & its dependent services in K8s
+
+To begin and ensure that the initial deployment files for the database work well,i followed the steps in module 6 above to create a 3 node k8s cluster and label the nodes accordingly. then i deploy the ks8 resources in the following order
+-> db-config.yaml ==> kubectl apply -f db-config.yaml
+-> db-secret.yaml ==> kubectl apply -f db-secret.yaml
+-> db-volume.yaml (for PV and PVC) ==> kubectl apply -f db-volume.yaml, then
+==> kubectl get svc,configmap,secrets,pv,pvc -n student-api-ns
+
+-> postgres-db.yaml (for the db and its service resources).
+==> kubectl apply -f postgres-db.yaml
+
+checking
+==> kubectl get svc,configmap,secret,pv,pvc,deployment -n student-api-ns
+
+then i ran the student api resources
+-> student-api-service.yaml
+==> kubectl get svc,configmap,secret,pv,pvc,deployment -n student-api-ns
+-> student-api-deployment.yaml
+==> kubectl apply -f student-api-deployment.yaml
+
+==> kubectl get svc,configmap,secret,pv,pvc,deployment -n student-api-ns
+
+The URL to check the runni app
+==> minikube -p sre-project service student-api-service -n student-api-ns --url
+
+*******************************
+Now to work on Kubernetes External Secrets Operator(ESO) using Hashicorp Vault.
+
+The ideal deployment order from research is as follows:
+Hashicopr vault -> Kubernetes External Secrets Operator (ESO) -> PostgreSQL Database -> CRUD Application
+
+Step 1 -> Start the cluster, label and taint the nodes appropriately (minikube)
+Step 2 -> Create the 3 required namespaces (student-api-ns, vault-ns, external-secrets-ns)
+==> kubectl get namespaces --show-labels
+
+Note that: namespaces in Kubernetes are a logical grouping of resources and are not bound to specific nodes. They provide a way to partition resources within a cluster but do not have any direct association with nodes. Instead, you control the placement of workloads (pods) within namespaces on specific nodes using node selectors, taints, and tolerations.
+
+Step 3 -> Install the Vault Helm chart
+==> helm repo add hashicorp https://helm.releases.hashicorp.com
+==> helm repo update
+==> helm repo list
+==> helm search repo hashicorp/vault
+==> helm install vault hashicorp/vault --namespace vault-ns -f vault-values.yaml
+*** To remove an install helm repo incase of starting a project allover again
+==> helm repo list
+==> helm repo remove <name-of-repo>
+
+**==> for vault that is not working properly at first, i uninstalled it so i can reinstall and after working/modifing the installation script due to the error it throw when i tried installing.
+==> helm delete vault --namespace vault-ns
+Check ruuning vault pods
+==> helm list --all-namespaces
+==> kubectl get pods -n vault-ns
+==> kubectl get pods -n vault-ns -o wide
+==> kubectl describe pod <vault-pod-name> -n vault-ns
+
+Step 4: Configure Vault
+-- First, get the Vault Pod name: 
+==> kubectl get pods --namespace vault-ns
+-- Then, initialize Vault: 
+==> kubectl exec -ti <pod-name> -n <namespace> -- vault operator init
+==> kubectl exec -ti vault-0 -n vault-ns -- vault operator init
+** This command will output several unseal keys and a root token. Save these securely as you will need them to unseal the Vault and for administrative tasks. **
+
+then:
+    Unseal Vault with at least three of the five keys:
+    => kubectl exec -ti <vault-pod-name> -n <vault-namespace> -- vault operator unseal <unseal-key-1>
+    => kubectl exec -ti <vault-pod-name> -n <vault-namespace> -- vault operator unseal <unseal-key-2>
+    => kubectl exec -ti <vault-pod-name> -n <vault-namespace> -- vault operator unseal <unseal-key-3>
+    e.g
+kubectl exec -ti vault-0 -n vault-ns -- vault operator unseal zg925uV1/jpKoPml7eSNvBKXa5NlowJsL8iGBq7RqX5r
+
+-> until you get output that says "initialized: true & Sealed: false"
+
+Join the vault-1 and vault-2 pod to the Raft cluster.
+==> kubectl exec -ti vault-1 -n vault-ns -- vault operator raft join http://vault-0.vault-internal:8200
+
+==> kubectl exec -ti vault-2 -n vault-ns -- vault operator raft join http://vault-0.vault-internal:8200
+
+Use the unseal key from above to unseal vault-1 and vault-2
+==> kubectl exec -ti vault-1 -- vault operator unseal $VAULT_UNSEAL_KEY
+==> kubectl exec -ti vault-2 -- vault operator unseal $VAULT_UNSEAL_KEY
+
+
+-- Set a secret in Vault
+1. Access Vault
+==> kubectl exec --stdin=true --tty=true vault-0 -n vault-ns -- /bin/sh
+2. Login with the root token when prompted.
+==> vault login
+3. Enable an instance of the kv-v2 secrets engine at the path <specify path> e.g secret
+==> vault secrets enable -path=secretdata kv-v2
+==> vault secrets enable -path=apidata kv-v2
+4. Create a secret at path "secret/" with a username and password.
+==> vault kv put secretdata/postgresql POSTGRES_DB="studentdb" POSTGRES_USER="schooluser" POSTGRES_PASSWORD="school123"
+
+==> vault kv put apidata/studentapi DB_DRIVER="postgres" DB_SOURCE="postgresql://schooluser:school123@postgres-service:5432/studentdb?sslmode=disable"
+
+5. Verify that the secret is defined at the path secret/webapp/config
+==> vault kv get secretdata/postgresql
+==> vault kv get apidata/studentapi
+6. Exit the vault-0 pod.
+==> exit
+
+-- Configure Kubernetes authentication
+The initial root token is a privileged user that can perform any operation at any path. The web application only requires the ability to read secrets defined at a single path. This application should authenticate and be granted a token with limited access.
+
+1. Start an interactive shell session on the vault-0 pod.
+==> kubectl exec --stdin=true --tty=true vault-0 -n vault-ns -- /bin/sh
+2. Enable the Kubernetes authentication method.
+==> vault auth enable kubernetes
+3. Configure the Kubernetes authentication method to use the location of the Kubernetes API.
+==> vault write auth/kubernetes/config \
+  token_reviewer_jwt="$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)" \
+  kubernetes_host="https://$(kubectl get svc -n kube-system kubernetes -o jsonpath='{.spec.clusterIP}'):443" \
+  kubernetes_ca_cert=@/var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+
+4. Define the policy rules to allow the ESO to read and retrieve secrets stored in Vault at path secretdata/postgresql:
+
+==> vault policy write eso-policy -<<EOF
+path "secretdata/postgresql" {
+  capabilities = ["read"]
+}
+EOF
+5. Create a Kubernetes authentication role (eso-role) that connects the Kubernetes service account name and eso-policy policy.
+==> vault write auth/kubernetes/role/eso-role \
+    bound_service_account_names=vault \
+    bound_service_account_namespaces=vault-ns \
+    policies=eso-policy \
+    ttl=24h
+6. Check the service name of the role
+==> vault read auth/kubernetes/role/eso-role
+7. Exit the vault-0 pod.
+==> exit
+
+## Deploy External Secrets Operator (ESO)
+1. add the ESO Helm repository.
+==> helm repo add external-secrets https://charts.external-secrets.io
+==> helm repo update
+==> helm search repo external-secrets/external-secrets
+==> helm repo list
+
+2. Prepare Custom Values File for scheduling the eso on a specific node. eso-node-values.yaml
+
+3. Install ESO Using Helm
+==> helm install external-secrets external-secrets/external-secrets \
+  --namespace external-secrets-ns \
+  -f eso-node-values.yaml
+
+Check ruuning external-secrets pods
+==> helm list --all-namespaces
+==> kubectl get pods -n external-secrets-ns
+==> kubectl get pods -n external-secrets-ns -o wide
+==> kubectl describe pod <vault-pod-name> -n external-secrets-ns
+==> kubectl logs <pod-name> -n external-secrets-ns
+
+*** PS: the kubernetes auth did not work for me now, i had to use the generic token method.
+
+4. Create Generic token: Create the Vault token secret to be used in the created SecretStore
+kubectl create secret generic vault-token --from-literal=token=<YOUR_VAULT_TOKEN> -n <namespace>
+==> kubectl create secret generic vault-token -n student-api-ns --from-literal=token=<VAULT_TOKEN>
+==> kubectl get secrets -n student-api-ns
+==> kubectl get secret vault-token -n student-api-ns -o yaml
+** To get it in JSON format:
+==> kubectl get secret vault-token -n student-api-ns -o json
+==> kubectl delete secret vault-token -n student-api-ns
+
+5. Create the ESO custom resource definitions (SecretStore or ClusterSecretStore and ExternalSecreteStore) in the same namespace where the token was created
+Apply the SecretStore configuration:
+***First get and update the vault server address in the secretstote file before applying
+==> kubectl get svc -n <vault-namespace>
+
+Then apply the eso CRD's:
+==> kubectl apply -f secret-store.yaml
+** Check the secretstore resource to confirm it is in ready Statement
+==> kubectl get secretstore -n student-api-ns
+==> kubectl describe secretstore vault-backend -n student-api-ns
+-> kubectl delete secretstore <secretstore-name> -n <namespace>
+==> kubectl delete secretstore vault-backend -n student-api-ns
+
+Apply the ClusterSecret command
+==> kubectl apply -f cluster-secret-store.yaml 
+==> kubectl get clustersecretstore -n student-api-ns
+==> kubectl describe clustersecretstore vault-cluster-store -n student-api-ns
+==> kubectl delete clustersecretstore vault-cluster-store -n student-api-ns
+
+Apply the ExternalSecretStore Configuration
+In your ExternalSecret, ensure you reference the SecretStore and the correct namespaces.
+==> kubectl apply -f external-secret.yaml
+==> kubectl get externalsecret -n student-api-ns
+==> kubectl describe externalsecret postgres-secrets -n student-api-ns
+==> kubectl delete externalsecret postgres-secrets -n student-api-ns
+** Check the created Secret according to your externalSecretStore yaml
+==> kubectl get secret postgres-credential -n student-api-ns -o yaml
+
+** Get the Vault Service Details
+==> kubectl get svc -n <vault-namespace>
+
+6. Deploy the database
+Firstly, Deploy the persistnt volume
+==> kubectl apply -f db-volume.yaml
+2. deploy the postgres DB
+==> kubectl apply -f db-eso.yaml
+
+7. Deploy the api
+==> kubectl apply -f student-api-service.yaml
+==> kubectl apply -f student-api-deployment.yaml
+
+Check for the access link or url
+==> minikube -p sre-project service student-api-service -n student-api-ns --url
+
+Check all resource:
+==> kubectl get deployment,svc,pod,secret -n student-api-ns
+
+check the init container:
+==> kubectl logs <pod_name> -c init-db -n student-api-ns
+
+=========================================================================
+### Milestone 8 - Deploy REST API & its dependent services using Helm Charts
+
+Helm: is a tool that helps to manage applications running in Kubernetes. Think of it as a package manager for Kubernetes, similar to how the App Store or Google Play Store helps you manage applications on your phone. Helm simplifies the complex task of managing Kubernetes applications, making it easier to deploy, upgrade, and maintain them. it is one of the best way to find, share, and use software built for Kubernetes.
+
+When you're running applications in Kubernetes, you often need to deploy lots of different pieces (like databases, web servers, etc.) and configure them correctly. Helm simplifies this by allowing you to package all these pieces together and manage them as a single unit.
+
+The prerequisites required for a successful and properly secured use of Helm includes:
+1. A Kubernetes cluster -> Kubernetes 1.19+
+2. Kubectl installed and set up to use the cluster
+3. Installing and configuring Helm.
+
+* For this project i will start the k8s cluster and configure the vault and eso to prepare the cluster for the app deployment. (following some steps from milstone 7)
+
+Some helm Commands:
+To create a simple chart:
+==> helm create <chart-name/release-name>
+To check of the chart release is created
+==> helm list --all-namespaces
+To uninstall a release
+==> helm uninstall <chart-name>
+To retrieve the release and see the actual template that was loaded.
+==> helm get manifest <chart-name>
+When you want to test the template rendering, but not actually install anything, you can use 
+==> helm install --debug --dry-run <chart-name> ./mychart
+
+Steps -->
+Step 1: Create a kubernetes cluster
+Step 2: Label nodes and create the 3 namespaces
+Step 3: Deploy Hashicorp vault and configure it using helm
+Step 4: Deploy external-secrets-operator using helm
+Step 5: Create a folder structure for the hel chart
+Step 6: Starts the creation of the chart or release in the appropriate folder
+a. ==> helm create vault/vault-eso
+We will not need generated files inside ./templates folder, so remove them and also clear all the content inside values.yaml.
+
+From the generate files in helm template directory
+==> rm -rf vault/vault-eso/templates/*
+To Install, navigate the repo that contain the chart files i.e cd /helm/vault/vault-eso
+==> helm install my-eso . -n student-api-ns
+
+b. ==> helm create db/postgredb
+To Install, navigate the repo that contain the chart files i.e cd /helm/vault/vault-eso
+==> helm install my-postgresdb . -n student-api-ns
+
+c. ==> helm create api/student-api-app
