@@ -103,7 +103,7 @@ Upon cloning the project repo to your local make, run the following code/script 
 make start_db
 make run_api
 ```
-To top the containers:
+To stop the containers:
 ```
 make stop_api
 ```
