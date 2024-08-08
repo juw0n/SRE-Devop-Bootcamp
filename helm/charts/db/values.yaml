@@ -65,6 +65,3 @@ postgresDB:
     name: postgres-pvc
     persistentVolumeClaim:
       claimName: postgres-pvc
-  
-
-  

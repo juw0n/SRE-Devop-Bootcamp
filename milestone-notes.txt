@@ -313,6 +313,14 @@ Step 2: Label nodes and create the 3 namespaces
 Step 3: Deploy Hashicorp vault and configure it using helm
 Step 4: Deploy external-secrets-operator using helm
 Step 5: Create a folder structure for the hel chart
+i. Use "create-helm-charts.sh" to create the helm chart folder structure.
+ii. Create the charts template and value from your k8s manifest.
+iii. Navigate to the Helm Directory to package each chart. This creates a .tgz file for each chart that can be installed.
+
+
+
+
+
 Step 6: Starts the creation of the chart or release in the appropriate folder
 a. ==> helm create vault/vault-eso
 We will not need generated files inside ./templates folder, so remove them and also clear all the content inside values.yaml.
