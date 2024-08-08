@@ -355,7 +355,7 @@ Use the custom node-selector.yaml file to install Argo CD.
 To Uninstall incase of an error
 ==> helm list -n argocd
 ==> helm uninstall argocd -n argocd
-verufy again
+verify again
 ==> kubectl get all -n argocd
 sometime, delete and recreate the namespace if you dont have other item on it
 ==> kubectl delete namespace argocd
