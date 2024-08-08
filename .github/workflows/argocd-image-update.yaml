@@ -15,7 +15,7 @@ jobs:
 
       - name: Set up environment
         run: |
-          IMAGE_TAG="v1.0.1" # Update this to the latest tag
+          IMAGE_TAG="v1.0.1" # Update this to the latest tag or fetch dynamically
 
       - name: Update API image tag in values.yaml
         run: |
@@ -30,5 +30,8 @@ jobs:
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
           git add helm/charts/api/values.yaml helm/charts/db/values.yaml
-          git commit -m "Update image tag to $IMAGE_TAG"
-          git push origin main
+          git diff-index --quiet HEAD || git commit -m "Update image tag to $IMAGE_TAG"
+      
+      - name: Push changes
+        run: |
+          git push origin main || echo "No changes to push"
