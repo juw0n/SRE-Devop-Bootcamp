@@ -1,0 +1,18 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: db-app
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: 'https://github.com/juw0n/SRE-Devop-Bootcamp'
+    targetRevision: HEAD
+    path: helm/charts/db
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: student-api-ns
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

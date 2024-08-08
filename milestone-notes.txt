@@ -351,8 +351,14 @@ To achieve the expectations outlined for Milestone 9, I took the following steps
 Upon instatiating and configuring a k8s cluster
 1. create a folder for the milstone argoCD/
 2. kubectl create namespace argocd
-3. Install argoCD using helm
-
+3. Install argoCD cli
+# Download the CLI binary
+curl -sSL -o argocd-darwin-amd64 https://github.com/argoproj/argo-cd/releases/latest/download/argocd-darwin-amd64
+# Make it executable
+chmod +x argocd-darwin-amd64
+# Move it to a directory in your PATH
+sudo mv argocd-darwin-amd64 /usr/local/bin/argocd
+4. Install argoCD using helm
 i. Add the Argo CD Helm repository:
 ==> helm repo add argo https://argoproj.github.io/argo-helm
 ==> helm repo update
