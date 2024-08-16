@@ -6,7 +6,7 @@ dbSecretStore:
   name: vault-backend
   namespace: student-api-ns
   vault:
-    server: "http://10.106.116.113:8200"
+    server: "http://10.104.242.34:8200"
     path: "secretdata"
     version: "v2"
     auth:
@@ -18,7 +18,7 @@ apiSecretStore:
   name: api-backend
   namespace: student-api-ns
   vault:
-    server: "http://10.106.116.113:8200"
+    server: "http://10.104.242.34:8200"
     path: "apidata"
     version: "v2"
     auth:

@@ -349,16 +349,17 @@ Argo CD is a declarative, GitOps continuous delivery tool for Kubernetes.
 To achieve the expectations outlined for Milestone 9, I took the following steps:
 
 Upon instatiating and configuring a k8s cluster
-1. create a folder for the milstone argoCD/
+1. create a folder for the milstone argoCD/ and navigated to the directory
 2. kubectl create namespace argocd
-3. Install argoCD cli
+3. Install argoCD cli ==> install with install-argocd.sh script OR follow the steps below.
+"""
 # Download the CLI binary
 curl -sSL -o argocd-darwin-amd64 https://github.com/argoproj/argo-cd/releases/latest/download/argocd-darwin-amd64
 # Make it executable
 chmod +x argocd-darwin-amd64
 # Move it to a directory in your PATH
 sudo mv argocd-darwin-amd64 /usr/local/bin/argocd
-4. Install argoCD using helm
+4. Add the repo and Install argoCD using helm
 i. Add the Argo CD Helm repository:
 ==> helm repo add argo https://argoproj.github.io/argo-helm
 ==> helm repo update
@@ -366,6 +367,8 @@ ii. Create custom node-selector.yaml file to specify node affinity for Argo CD c
 iii. Install Argo CD with Helm:
 Use the custom node-selector.yaml file to install Argo CD.
 ==> helm install argocd argo/argo-cd --namespace argocd -f node-selector.yaml
+"""
+*******************************
 To Uninstall incase of an error
 ==> helm list -n argocd
 ==> helm uninstall argocd -n argocd
@@ -373,12 +376,11 @@ verify again
 ==> kubectl get all -n argocd
 sometime, delete and recreate the namespace if you dont have other item on it
 ==> kubectl delete namespace argocd
+*******************************
 
 iv. check all resources and pod are up and running
 ==> kubectl -n argocd get all
 ==> kubectl get pods -n argocd -o wide
-
-v. 
 
 4. Access the Argo CD UI:
 i. Change the argocd-server service type to LoadBalancer OR NodePort:
@@ -386,19 +388,47 @@ i. Change the argocd-server service type to LoadBalancer OR NodePort:
 OR
 ==> kubectl patch svc argocd-server -n argocd -p '{"spec": {"type": "NodePort"}}'
 
-ii. Forward the Argo CD server port to access the UI locally.
+ii. Forward the Argo CD server port to access the server
 ==> kubectl port-forward svc/argocd-server -n argocd 8080:443
-iii. The API server can then be accessed using (uisng web UI)
-username: admin
-Retrieve the initial admin password:  
+Retrieve the initial admin password:
 ==> kubectl -n argocd get secret
 ==> kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d
-
-==> https://localhost:8080
 OR
-Use the Argo CD CLI to login to Argo CD's using server IP or hostname:
-==> argocd login <ARGOCD_SERVER>
-or
+==> argocd account update-password
+
+iii. The API server can then be accessed using (uisng web UI)
+==> https://localhost:8080
+username: admin
+Retrieve the initial admin password:  
+OR CLI
 ==> argocd login localhost:8080 --insecure
+username: admin
+Retrieve the initial admin password:
+change password:
+==> argocd account update-password
 
 5. Setting Up Argo CD Applications
+i. Set Up Your Git Repository (your helm chart files)
+==> argocd repo add <REPO_URL> --username <USERNAME> --password <PASSWORD>
+ii. Create Argo CD Application Manifests
+- api-app.yaml
+- db-app.yaml
+- vault-app.yaml
+iii. Apply Argo CD Application Manifests (vault->db->api)
+==> kubectl apply -f path/to/argo-apps/vault-app.yaml
+==> kubectl apply -f path/to/argo-apps/db-app.yaml
+==> kubectl apply -f path/to/argo-apps/api-app.yaml
+
+6. Verify and Manage in Argo CD
+check the argoCD via cli and UI to ensure the deployed app are up and health.
+
+7. Create GitHub Actions Workflow:
+Define a workflow that updates the image tag in the values.yaml file and commits the changes.
+
+Resources:
+1. https://argo-cd.readthedocs.io/en/stable/getting_started/
+2. https://www.cncf.io/blog/2021/09/28/gitops-101-whats-it-all-about/
+3. https://www.youtube.com/watch?v=8AJlVQy6Cx0
+
+=========================================================================
+### Milestone 10 - Setup an observability stack

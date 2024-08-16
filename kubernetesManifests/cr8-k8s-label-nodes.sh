@@ -47,6 +47,22 @@ metadata:
   name: student-api-ns
   labels:
     name: student-api-ns
+---
+# agrocd
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: agrocd
+  labels:
+    name: agrocd
+---
+# observability
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: observability
+  labels:
+    name: observability
 EOF
 
 echo "Done creating namespaces"
