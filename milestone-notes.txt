@@ -351,6 +351,8 @@ To achieve the expectations outlined for Milestone 9, I took the following steps
 Upon instatiating and configuring a k8s cluster
 1. create a folder for the milstone argoCD/ and navigated to the directory
 2. kubectl create namespace argocd
+*** The following step have been scripted.
+""
 3. Install argoCD cli ==> install with install-argocd.sh script OR follow the steps below.
 """
 # Download the CLI binary
@@ -367,7 +369,8 @@ ii. Create custom node-selector.yaml file to specify node affinity for Argo CD c
 iii. Install Argo CD with Helm:
 Use the custom node-selector.yaml file to install Argo CD.
 ==> helm install argocd argo/argo-cd --namespace argocd -f node-selector.yaml
-"""
+""
+Incase of error
 *******************************
 To Uninstall incase of an error
 ==> helm list -n argocd
@@ -394,6 +397,7 @@ Retrieve the initial admin password:
 ==> kubectl -n argocd get secret
 ==> kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d
 OR
+Update the password:
 ==> argocd account update-password
 
 iii. The API server can then be accessed using (uisng web UI)
@@ -425,6 +429,9 @@ check the argoCD via cli and UI to ensure the deployed app are up and health.
 7. Create GitHub Actions Workflow:
 Define a workflow that updates the image tag in the values.yaml file and commits the changes.
 
+Check for the access link or url
+==> minikube -p sre-project service student-api-service -n student-api-ns --url
+
 Resources:
 1. https://argo-cd.readthedocs.io/en/stable/getting_started/
 2. https://www.cncf.io/blog/2021/09/28/gitops-101-whats-it-all-about/
@@ -432,3 +439,32 @@ Resources:
 
 =========================================================================
 ### Milestone 10 - Setup an observability stack
+
+Before installing Prometheus, Loki, and Grafana, you'll need to add their respective Helm repositories:
+1. Adding helm repo
+# Add Prometheus community Helm repository
+==> helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+
+# Add Grafana Helm repository (includes Loki and Grafana)
+==> helm repo add grafana https://grafana.github.io/helm-charts
+
+# Update your Helm repositories to ensure you have the latest versions
+==> helm repo update
+2. Install the Services:
+# Install Prometheus
+==> helm install prometheus prometheus-community/prometheus --namespace observability -f node-selector.yaml
+# Install Loki (with Promtail) from Grafana repo
+==> helm install loki grafana/loki-stack --namespace observability -f node-selector.yaml
+
+# Install Grafana
+==> helm install grafana grafana/grafana --namespace observability -f node-selector.yaml
+
+Check/verify
+==> kubectl get pods -n observability -o wide 
+** Steps to Uninstall Helm Releases incase
+==> helm list --all-namespaces
+helm uninstall <release-name> --namespace <namespace>
+==> helm uninstall prometheus --namespace observability
+==> helm uninstall loki --namespace observability
+==> helm uninstall grafana --namespace observability
+==> kubectl get all --namespace <namespace>

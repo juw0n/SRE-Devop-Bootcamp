@@ -44,3 +44,7 @@ helm install "$RELEASE_NAME" "$HELM_REPO_NAME/$HELM_CHART_NAME" --namespace "$NA
 # Confirm Argo CD installation
 echo "Checking Argo CD installation..."
 kubectl get pods -n "$NAMESPACE"
+
+# Change the argocd-server service type to LoadBalancer OR NodePort:
+echo "Change argo-server service type"
+kubectl patch svc argocd-server -n "$NAMESPACE" -p '{"spec": {"type": "LoadBalancer"}}'

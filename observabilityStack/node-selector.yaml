@@ -1,0 +1,33 @@
+# Global affinity setting for all components
+affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+          - matchExpressions:
+              - key: service
+                operator: In
+                values:
+                  - dependent-services-node
+# Specific configurations for individual components
+---
+server:
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+          - matchExpressions:
+              - key: service
+                operator: In
+                values:
+                  - dependent-services-node
+---
+loki:
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+          - matchExpressions:
+              - key: service
+                operator: In
+                values:
+                  - dependent-services-node

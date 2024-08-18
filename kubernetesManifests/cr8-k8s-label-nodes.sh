@@ -48,13 +48,13 @@ metadata:
   labels:
     name: student-api-ns
 ---
-# agrocd
+# argocd
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: agrocd
+  name: argocd
   labels:
-    name: agrocd
+    name: argocd
 ---
 # observability
 apiVersion: v1
