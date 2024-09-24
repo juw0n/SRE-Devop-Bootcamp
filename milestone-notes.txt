@@ -235,6 +235,7 @@ kubectl create secret generic vault-token --from-literal=token=<YOUR_VAULT_TOKEN
 Apply the SecretStore configuration:
 ***First get and update the vault server address in the secretstote file before applying
 ==> kubectl get svc -n <vault-namespace>
+==> kubectl get svc -n vault-ns
 
 Then apply the eso CRD's:
 ==> kubectl apply -f secret-store.yaml
@@ -468,3 +469,16 @@ helm uninstall <release-name> --namespace <namespace>
 ==> helm uninstall loki --namespace observability
 ==> helm uninstall grafana --namespace observability
 ==> kubectl get all --namespace <namespace>
+
+-----------------------------
+-> get the Grafana admin password:
+==> kubectl get secret --namespace observability grafana -o jsonpath="{.data.admin-password}" | base64 --decode ; echo
+-> Configure Promtail to Send Logs to Loki. Promtail is a log collector that sends logs to Loki. Install Promtail:
+==> helm install promtail grafana/promtail --namespace observability --set config.lokiAddress="http://loki:3100/loki/api/v1/push"
+-> Configure Prometheus to Scrape DB Metrics. You'll need a PostgreSQL exporter to expose metrics for Prometheus to scrape. Deploy the PostgreSQL exporter:
+==> helm install postgres-exporter prometheus-community/prometheus-postgres-exporter --namespace observability
+
+Update Prometheus to scrape metrics from this exporter by modifying the prometheus.yaml file:
+
+-> Add Blackbox Exporter for Endpoint Monitoring
+== helm install blackbox-exporter prometheus-community/prometheus-blackbox-exporter --namespace observability
