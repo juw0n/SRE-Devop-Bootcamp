@@ -45,3 +45,13 @@ echo
 
 echo "Deployment completed."
 echo
+
+# To Uninstall the helm release
+# # Uninstall Helm releases
+# # helm list -n observability
+# helm uninstall prometheus -n observability
+# helm uninstall loki -n observability
+# helm uninstall grafana -n observability
+
+# Had error with prometheus server crashing and fix it with this link
+# ==> https://github.com/helm/charts/issues/15742

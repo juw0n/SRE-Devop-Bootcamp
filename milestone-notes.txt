@@ -460,6 +460,27 @@ Before installing Prometheus, Loki, and Grafana, you'll need to add their respec
 # Install Grafana
 ==> helm install grafana grafana/grafana --namespace observability -f node-selector.yaml
 
+PS:
+Prometheus server was givinf crashloopback error and got the issu fixed with 
+"""
+kubectl edit deploy prometheus-server -n prometheus
+
+from
+
+      securityContext:
+        fsGroup: 65534
+        runAsGroup: 65534
+        runAsNonRoot: true
+        runAsUser: 65534
+to
+
+  securityContext:
+    fsGroup: 0
+    runAsGroup: 0
+    runAsNonRoot: false
+    runAsUser: 0
+"""
+
 Check/verify
 ==> kubectl get pods -n observability -o wide 
 ** Steps to Uninstall Helm Releases incase
