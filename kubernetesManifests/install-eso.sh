@@ -41,3 +41,7 @@ echo "Listing Helm repositories..."
 helm repo list
 echo "*****Helm repositories listed.*****"
 echo
+echo "External-secrets Helm chart installation complete."
+echo
+echo "See running external-secrets pods"
+kubectl get pods -n external-secrets-ns -o wide

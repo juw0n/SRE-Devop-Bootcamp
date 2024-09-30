@@ -25,12 +25,12 @@ echo
 
 # Install Prometheus with node selector configuration
 echo "Installing Prometheus..."
-helm install prometheus prometheus-community/prometheus --namespace $NAMESPACE -f node-selector.yaml
+helm install prometheus prometheus-community/prometheus --namespace $NAMESPACE -f node-selector.yaml -f prometheus-scrape-config.yaml
 echo
 
 # Install Loki with Promtail using Grafana repo and node selector configuration
 echo "Installing Loki (with Promtail)..."
-helm install loki grafana/loki-stack --namespace $NAMESPACE -f node-selector.yaml
+helm install loki grafana/loki-stack --namespace $NAMESPACE -f node-selector.yaml -f promtail-config.yaml
 echo
 
 # Install Grafana with node selector configuration

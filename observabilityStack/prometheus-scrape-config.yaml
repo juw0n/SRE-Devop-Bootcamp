@@ -1,0 +1,13 @@
+# Prometheus additional configurations to scrape the DB exporter, node 
+# metrics, and kube-state metrics.
+server:
+  additionalScrapeConfigs:
+    - job_name: 'kubernetes-nodes'
+      kubernetes_sd_configs:
+        - role: node
+    - job_name: 'kube-state-metrics'
+      static_configs:
+        - targets: ['kube-state-metrics:8080']
+    - job_name: 'db-exporter'
+      static_configs:
+        - targets: ['db-exporter:9100']

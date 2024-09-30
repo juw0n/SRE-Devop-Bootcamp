@@ -1,0 +1,10 @@
+USER-SUPPLIED VALUES:
+affinity:
+  nodeAffinity:
+    requiredDuringSchedulingIgnoredDuringExecution:
+      nodeSelectorTerms:
+      - matchExpressions:
+        - key: service
+          operator: In
+          values:
+          - dependent-services-node

@@ -1,0 +1,11 @@
+# promtail configuration to send only application logs to Loki
+promtail:
+  config:
+    scrape_configs:
+      - job_name: 'application-logs'
+        static_configs:
+          - targets:
+              - localhost
+            labels:
+              job: application
+              __path__: /var/log/app/*.log

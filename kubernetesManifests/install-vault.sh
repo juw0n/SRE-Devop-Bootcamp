@@ -51,3 +51,9 @@ helm repo list
 echo "********************"
 echo 
 echo "Vault Helm chart installation complete."
+echo
+echo "See running vault pods"
+kubectl get pods -n vault-ns -o wide
+echo
+echo "Vault service services"
+kubectl get svc -n vault-ns -o wide
