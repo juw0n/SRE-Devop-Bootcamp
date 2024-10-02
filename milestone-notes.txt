@@ -165,9 +165,12 @@ Use the unseal key from above to unseal vault-1 and vault-2
 5. Verify that the secret is defined at the path secret/webapp/config
 ==> vault kv get secretdata/postgresql
 ==> vault kv get apidata/studentapi
+** Enable the Kubernetes authentication method.
+==> vault auth enable kubernetes
 6. Exit the vault-0 pod.
 ==> exit
-
+**************************************************************
+**************************************************************
 -- Configure Kubernetes authentication
 The initial root token is a privileged user that can perform any operation at any path. The web application only requires the ability to read secrets defined at a single path. This application should authenticate and be granted a token with limited access.
 
@@ -198,6 +201,8 @@ EOF
 ==> vault read auth/kubernetes/role/eso-role
 7. Exit the vault-0 pod.
 ==> exit
+**************************************************************
+**************************************************************
 
 ## Deploy External Secrets Operator (ESO)
 1. add the ESO Helm repository.
@@ -463,7 +468,7 @@ Before installing Prometheus, Loki, and Grafana, you'll need to add their respec
 PS:
 Prometheus server was giving crashloopback error and got the issue fixed with 
 """
-kubectl edit deploy prometheus-server -n prometheus
+kubectl edit deploy prometheus-server -n observability
 
 from
 
@@ -495,9 +500,23 @@ helm uninstall <release-name> --namespace <namespace>
 -> get the Grafana admin password:
 ==> kubectl get secret --namespace observability grafana -o jsonpath="{.data.admin-password}" | base64 --decode ; echo
 -> Configure Promtail to Send Logs to Loki. Promtail is a log collector that sends logs to Loki. Install Promtail:
+Access the grafana UI: You can port-forward the grafans server to access the web interface:
+==> kubectl port-forward --namespace observability service/grafana 3000:80
+then:
+http://localhost:3000/
+
+Access the Prometheus UI: You can port-forward the Prometheus server to access the web interface:
+==> kubectl port-forward svc/prometheus-server -n observability 9090:80
+then:
+http://localhost:9090/targets
+
 ==> helm install promtail grafana/promtail --namespace observability --set config.lokiAddress="http://loki:3100/loki/api/v1/push"
 
 -> Configure Prometheus to Scrape DB Metrics. You'll need a PostgreSQL exporter to expose metrics for Prometheus to scrape. Deploy the PostgreSQL exporter:
+Deploy a DB Metrics Exporter: This exporter exposes database metrics that Prometheus can scrape.
+==> helm install postgres-exporter prometheus-community/prometheus-postgres-exporter --namespace observability
+
+==> helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
 ==> helm install postgres-exporter prometheus-community/prometheus-postgres-exporter --namespace observability
 
 Update Prometheus to scrape metrics from this exporter by modifying the prometheus.yaml file:

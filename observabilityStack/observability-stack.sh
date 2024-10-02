@@ -43,7 +43,7 @@ echo "Checking the status of the deployed services..."
 kubectl get pods -n $NAMESPACE -o wide
 echo
 
-echo "Deployment completed."
+echo "All tasks completed successfully!"
 echo
 
 # To Uninstall the helm release

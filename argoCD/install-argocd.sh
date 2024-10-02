@@ -9,24 +9,34 @@ HELM_CHART_NAME="argo-cd"
 NAMESPACE="argocd"
 RELEASE_NAME="argocd"
 
-# Download the Argo CD CLI binary
-echo "Downloading Argo CD CLI..."
-curl -sSL -o argocd-linux-amd64 "$URL" && \
-
-# Make the binary executable
-echo "Setting executable permissions..."
-chmod +x argocd-linux-amd64
-
-# Move the binary to /usr/local/bin
-echo "Moving the binary to $DEST..."
-sudo mv argocd-linux-amd64 "$DEST"
-
-# Confirm installation
+# Check if Argo CD CLI is already installed
 if command -v argocd &> /dev/null
 then
-    echo "Argo CD CLI installed successfully!"
+    echo "Argo CD CLI is already installed."
 else
-    echo "Failed to install Argo CD CLI."
+    # If not installed, proceed with the installation
+    echo "Argo CD CLI not found. Proceeding with installation..."
+
+    # Download the Argo CD CLI binary
+    echo "Downloading Argo CD CLI..."
+    curl -sSL -o argocd-linux-amd64 "$URL"
+
+    # Make the binary executable
+    echo "Setting executable permissions..."
+    chmod +x argocd-linux-amd64
+
+    # Move the binary to /usr/local/bin
+    echo "Moving the binary to $DEST..."
+    sudo mv argocd-linux-amd64 "$DEST"
+
+    # Confirm installation
+    if command -v argocd &> /dev/null
+    then
+        echo "Argo CD CLI installed successfully!"
+    else
+        echo "Failed to install Argo CD CLI."
+        exit 1
+    fi
 fi
 
 # Add the Argo Helm repository
@@ -48,3 +58,9 @@ kubectl get pods -n "$NAMESPACE"
 # Change the argocd-server service type to LoadBalancer OR NodePort:
 echo "Change argo-server service type"
 kubectl patch svc argocd-server -n "$NAMESPACE" -p '{"spec": {"type": "LoadBalancer"}}'
+echo
+echo "See argocd running services"
+kubectl get svc -n "$NAMESPACE" -o wide
+echo 
+echo "All tasks completed successfully!"
+echo

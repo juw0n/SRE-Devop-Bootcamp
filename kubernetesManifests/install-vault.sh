@@ -55,5 +55,5 @@ echo
 echo "See running vault pods"
 kubectl get pods -n vault-ns -o wide
 echo
-echo "Vault service services"
+echo "Vault services"
 kubectl get svc -n vault-ns -o wide

@@ -45,3 +45,6 @@ echo "External-secrets Helm chart installation complete."
 echo
 echo "See running external-secrets pods"
 kubectl get pods -n external-secrets-ns -o wide
+echo
+echo "See external-secrets services"
+kubectl get svc -n external-secrets-ns -o wide
