@@ -401,7 +401,7 @@ ii. Forward the Argo CD server port to access the server
 ==> kubectl port-forward svc/argocd-server -n argocd 8080:443
 Retrieve the initial admin password:
 ==> kubectl -n argocd get secret
-==> kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d
+==> kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d; echo
 OR
 Update the password:
 ==> argocd account update-password
@@ -499,11 +499,13 @@ helm uninstall <release-name> --namespace <namespace>
 -----------------------------
 -> get the Grafana admin password:
 ==> kubectl get secret --namespace observability grafana -o jsonpath="{.data.admin-password}" | base64 --decode ; echo
--> Configure Promtail to Send Logs to Loki. Promtail is a log collector that sends logs to Loki. Install Promtail:
-Access the grafana UI: You can port-forward the grafans server to access the web interface:
 ==> kubectl port-forward --namespace observability service/grafana 3000:80
 then:
 http://localhost:3000/
+
+-> Configure Promtail to Send Logs to Loki. Promtail is a log collector that sends logs to Loki. Install Promtail:
+Access the grafana UI: You can port-forward the grafans server to access the web interface:
+
 
 Access the Prometheus UI: You can port-forward the Prometheus server to access the web interface:
 ==> kubectl port-forward svc/prometheus-server -n observability 9090:80

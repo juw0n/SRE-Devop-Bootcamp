@@ -33,9 +33,15 @@ echo "Installing Loki (with Promtail)..."
 helm install loki grafana/loki-stack --namespace $NAMESPACE -f node-selector.yaml -f promtail-config.yaml
 echo
 
+# Deploy a DB Metrics Exporter which exposes database metrics that Prometheus can scrape.
+helm install postgres-exporter prometheus-community/prometheus-postgres-exporter --namespace observability
+
+# Blackbox exporter is used to check the availability and latency of services.
+helm install blackbox-exporter prometheus-community/prometheus-blackbox-exporter --namespace observability
+
 # Install Grafana with node selector configuration
 echo "Installing Grafana..."
-helm install grafana grafana/grafana --namespace $NAMESPACE -f node-selector.yaml
+helm install grafana grafana/grafana --namespace $NAMESPACE -f node-selector.yaml -f grafana-data-source.yaml
 echo
 
 # Verify the deployment
