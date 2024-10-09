@@ -165,6 +165,8 @@ Use the unseal key from above to unseal vault-1 and vault-2
 5. Verify that the secret is defined at the path secret/webapp/config
 ==> vault kv get secretdata/postgresql
 ==> vault kv get apidata/studentapi
+==> vault kv get metricsexporter/dbexporter
+
 ** Enable the Kubernetes authentication method.
 ==> vault auth enable kubernetes
 6. Exit the vault-0 pod.
@@ -512,9 +514,14 @@ Access the Prometheus UI: You can port-forward the Prometheus server to access t
 then:
 http://localhost:9090/targets
 
+Promtail is an agent which ships the contents of local logs to a private Grafana Loki instance or Grafana Cloud. It is usually deployed to every machine that runs applications which need to be monitored.
+
 ==> helm install promtail grafana/promtail --namespace observability --set config.lokiAddress="http://loki:3100/loki/api/v1/push"
 
 -> Configure Prometheus to Scrape DB Metrics. You'll need a PostgreSQL exporter to expose metrics for Prometheus to scrape. Deploy the PostgreSQL exporter:
+
+A DB metrics exporter is a tool that exposes database performance and health metrics to a monitoring system like Prometheus. It collects key information from the database, such as query performance, connection stats, and resource usage, and makes it available in a standardized format (typically metrics in Prometheus' exposition format).
+
 Deploy a DB Metrics Exporter: This exporter exposes database metrics that Prometheus can scrape.
 ==> helm install postgres-exporter prometheus-community/prometheus-postgres-exporter --namespace observability
 

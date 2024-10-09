@@ -1,0 +1,50 @@
+replicaCount: 1
+
+service:
+  port: 9187
+  type: ClusterIP
+
+resources:
+  limits:
+    cpu: 100m
+    memory: 128Mi
+  requests:
+    cpu: 50m
+    memory: 64Mi
+
+# Database connection details - retrieved from HashiCorp Vault via ESO
+env:
+  - name: DATA_SOURCE_NAME
+    valueFrom:
+      secretKeyRef:
+        name: postgres-credentials
+        key: connection_string
+
+# Vault integration using External Secrets Operator
+externalSecrets:
+  - name: postgres-credentials
+    backendType: vault
+    data:
+      - key: secretdata/data/postgresql
+        name: connection_string
+        property: connection_string # Fetch this from Vault
+
+# Prometheus scrape configuration
+prometheus:
+  enabled: true
+  annotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "9187"
+
+# ServiceMonitor for Prometheus Operator
+serviceMonitor:
+  enabled: true
+  interval: 30s
+  scrapeTimeout: 10s
+  selector:
+    matchLabels:
+      release: prometheus
+  endpoints:
+    - port: http
+      path: /metrics
+      interval: 30s

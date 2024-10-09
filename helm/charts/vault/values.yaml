@@ -14,6 +14,7 @@ dbSecretStore:
         name: vault-token
         key: token
 
+---
 apiSecretStore:
   name: api-backend
   namespace: student-api-ns
@@ -26,6 +27,20 @@ apiSecretStore:
         name: vault-token
         key: token
 
+---
+metricsSecretStore:
+  name: metrics-backend
+  namespace: student-api-ns
+  vault:
+    server: "http://10.105.8.9:8200"
+    path: "metricsexporter"
+    version: "v2"
+    auth:
+      tokenSecretRef:
+        name: vault-token
+        key: token
+
+---
 dbExternalSecretStore:
   name: postgres-secrets
   namespace: student-api-ns
@@ -46,7 +61,8 @@ dbExternalSecretStore:
     POSTGRES_DB:
       key: secretdata/data/postgresql
       property: POSTGRES_DB
-  
+
+--- 
 apiExternalSecretStore:
   name: api-secrets
   namespace: student-api-ns
@@ -64,3 +80,25 @@ apiExternalSecretStore:
     DB_SOURCE:
       key: apidata/data/studentapi
       property: DB_SOURCE
+
+---
+metricsExternalSecretStore:
+  name: metrics-secrets
+  namespace: student-api-ns
+  refreshInterval: "1h"
+  secretStoreRef:
+    name: metrics-backend
+    kind: SecretStore
+  target:
+    name: metrics-credential
+    creationPolicy: Owner
+  data:
+    POSTGRES_USER:
+      key: metricsexporter/data/dbexporter
+      property: POSTGRES_USER
+    POSTGRES_PASSWORD:
+      key: metricsexporter/data/dbexporter
+      property: POSTGRES_PASSWORD
+    POSTGRES_DB:
+      key: metricsexporter/data/dbexporter
+      property: POSTGRES_DB
