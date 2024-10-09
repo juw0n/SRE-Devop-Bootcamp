@@ -14,7 +14,7 @@ dbSecretStore:
         name: vault-token
         key: token
 
----
+
 apiSecretStore:
   name: api-backend
   namespace: student-api-ns
@@ -27,7 +27,7 @@ apiSecretStore:
         name: vault-token
         key: token
 
----
+
 metricsSecretStore:
   name: metrics-backend
   namespace: student-api-ns
@@ -40,7 +40,7 @@ metricsSecretStore:
         name: vault-token
         key: token
 
----
+
 dbExternalSecretStore:
   name: postgres-secrets
   namespace: student-api-ns
@@ -62,7 +62,7 @@ dbExternalSecretStore:
       key: secretdata/data/postgresql
       property: POSTGRES_DB
 
---- 
+
 apiExternalSecretStore:
   name: api-secrets
   namespace: student-api-ns
@@ -81,7 +81,7 @@ apiExternalSecretStore:
       key: apidata/data/studentapi
       property: DB_SOURCE
 
----
+
 metricsExternalSecretStore:
   name: metrics-secrets
   namespace: student-api-ns
