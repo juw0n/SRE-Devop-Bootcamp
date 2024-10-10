@@ -157,6 +157,8 @@ Use the unseal key from above to unseal vault-1 and vault-2
 3. Enable an instance of the kv-v2 secrets engine at the path <specify path> e.g secret
 ==> vault secrets enable -path=secretdata kv-v2
 ==> vault secrets enable -path=apidata kv-v2
+==> vault secrets enable -path=metricsexporter kv-v2
+
 4. Create a secret at path "secret/" with a username and password.
 ==> vault kv put secretdata/postgresql POSTGRES_DB="studentdb" POSTGRES_USER="schooluser" POSTGRES_PASSWORD="school123"
 

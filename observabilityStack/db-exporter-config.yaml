@@ -1,5 +1,3 @@
-replicaCount: 1
-
 service:
   port: 9187
   type: ClusterIP
@@ -14,20 +12,33 @@ resources:
 
 # Database connection details - retrieved from HashiCorp Vault via ESO
 env:
-  - name: DATA_SOURCE_NAME
+  - name: DATA_SOURCE_USER
     valueFrom:
       secretKeyRef:
-        name: postgres-credentials
-        key: connection_string
-
-# Vault integration using External Secrets Operator
-externalSecrets:
-  - name: postgres-credentials
-    backendType: vault
-    data:
-      - key: secretdata/data/postgresql
-        name: connection_string
-        property: connection_string # Fetch this from Vault
+        name: metrics-credential
+        key: POSTGRES_USER
+  - name: DATA_SOURCE_PASS
+    valueFrom:
+      secretKeyRef:
+        name: metrics-credential
+        key: POSTGRES_PASSWORD
+  - name: POSTGRES_DB
+    valueFrom:
+      secretKeyRef:
+        name: metrics-credential
+        key: POSTGRES_DB
+  - name: POSTGRES_HOST
+    valueFrom:
+      secretKeyRef:
+        name: metrics-credential
+        key: POSTGRES_HOST
+  - name: POSTGRES_PORT
+    valueFrom:
+      secretKeyRef:
+        name: metrics-credential
+        key: POSTGRES_PORT
+  - name: DATA_SOURCE_NAME
+    value: postgresql://$(DATA_SOURCE_USER):$(DATA_SOURCE_PASS)@$(POSTGRES_HOST):$(POSTGRES_PORT)/$(POSTGRES_DB)?sslmode=disable
 
 # Prometheus scrape configuration
 prometheus:
@@ -39,7 +50,7 @@ prometheus:
 # ServiceMonitor for Prometheus Operator
 serviceMonitor:
   enabled: true
-  interval: 30s
+  interval: 10s
   scrapeTimeout: 10s
   selector:
     matchLabels:
@@ -47,4 +58,4 @@ serviceMonitor:
   endpoints:
     - port: http
       path: /metrics
-      interval: 30s
+      interval: 10s

@@ -102,3 +102,9 @@ metricsExternalSecretStore:
     POSTGRES_DB:
       key: metricsexporter/data/dbexporter
       property: POSTGRES_DB
+    POSTGRES_HOST:
+      key: metricsexporter/data/dbexporter
+      property: POSTGRES_HOST
+    POSTGRES_PORT:
+      key: metricsexporter/data/dbexporter
+      property: POSTGRES_PORT
