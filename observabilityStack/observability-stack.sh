@@ -34,10 +34,10 @@ helm install loki grafana/loki-stack --namespace $NAMESPACE -f node-selector.yam
 echo
 
 # Deploy a DB Metrics Exporter which exposes database metrics that Prometheus can scrape.
-helm install postgres-exporter prometheus-community/prometheus-postgres-exporter --namespace observability
+helm install postgres-exporter prometheus-community/prometheus-postgres-exporter --namespace $NAMESPACE -f db-exporter-config.yaml
 
 # Blackbox exporter is used to check the availability and latency of services.
-helm install blackbox-exporter prometheus-community/prometheus-blackbox-exporter --namespace observability
+helm install blackbox-exporter prometheus-community/prometheus-blackbox-exporter --namespace $NAMESPACE -f blackbox-config.yaml
 
 # Install Grafana with node selector configuration
 echo "Installing Grafana..."

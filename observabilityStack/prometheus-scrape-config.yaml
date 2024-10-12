@@ -1,13 +1,36 @@
 # Prometheus additional configurations to scrape the DB exporter, node 
 # metrics, and kube-state metrics.
+# Prometheus additional configurations to scrape the DB exporter, node metrics, and kube-state metrics.
 server:
   additionalScrapeConfigs:
+    # Scrape node metrics
     - job_name: 'kubernetes-nodes'
       kubernetes_sd_configs:
         - role: node
+    # Scrape kube-state metrics
     - job_name: 'kube-state-metrics'
       static_configs:
         - targets: ['kube-state-metrics:8080']
+    # Scrape PostgreSQL DB exporter metrics
     - job_name: 'db-exporter'
       static_configs:
-        - targets: ['db-exporter:9100']
+        - targets: ['db-exporter:9187']  # Ensure 'db-exporter' matches the service name for your DB exporter
+      metrics_path: /metrics
+      relabel_configs:
+        - source_labels: [__meta_kubernetes_service_name]
+          regex: db-exporter
+          action: keep
+    # Scrape Blackbox exporter
+    - job_name: 'blackbox'
+      metrics_path: /probe
+      params:
+        module: [http_2xx]  # Blackbox module to use
+      static_configs:
+        - targets:
+            - http://example.com/  # Replace with the actual target to monitor
+            - http://another-internal-endpoint.com/  # Add more targets as needed
+      relabel_configs:
+        - source_labels: [__address__]
+          target_label: __param_target
+        - target_label: __address__
+          replacement: blackbox-exporter:9115  # Ensure this matches your Blackbox Exporter service and port
