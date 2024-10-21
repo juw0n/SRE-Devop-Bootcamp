@@ -41,7 +41,7 @@ helm install blackbox-exporter prometheus-community/prometheus-blackbox-exporter
 
 # Install Grafana with node selector configuration
 echo "Installing Grafana..."
-helm install grafana grafana/grafana --namespace $NAMESPACE -f node-selector.yaml -f grafana-data-source.yaml
+helm install grafana grafana/grafana --namespace $NAMESPACE -f node-selector.yaml
 echo
 
 # Verify the deployment
