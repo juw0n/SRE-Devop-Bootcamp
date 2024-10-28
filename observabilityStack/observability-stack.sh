@@ -25,24 +25,28 @@ echo
 
 # Install Prometheus with node selector configuration
 echo "Installing Prometheus..."
-helm install prometheus prometheus-community/prometheus --namespace $NAMESPACE -f node-selector.yaml -f prometheus-scrape-config.yaml
+helm install prometheus prometheus-community/prometheus --namespace $NAMESPACE -f node-selector.yaml
 echo
 
 # Install Loki with Promtail using Grafana repo and node selector configuration
 echo "Installing Loki (with Promtail)..."
-helm install loki grafana/loki-stack --namespace $NAMESPACE -f node-selector.yaml -f promtail-config.yaml
+helm install loki grafana/loki-stack --namespace $NAMESPACE -f node-selector.yaml
 echo
+
+# Install Grafana with node selector configuration
+echo "Installing Grafana..."
+helm install grafana grafana/grafana --namespace $NAMESPACE -f node-selector.yaml
+echo
+
+# Install Promtail
+echo "Installing Promtail and configured to send only application logs to Loki"
+helm upgrade --values promtail-config.yaml --install promtail grafana/promtail
 
 # Deploy a DB Metrics Exporter which exposes database metrics that Prometheus can scrape.
 helm install postgres-exporter prometheus-community/prometheus-postgres-exporter --namespace $NAMESPACE -f db-exporter-config.yaml
 
 # Blackbox exporter is used to check the availability and latency of services.
 helm install blackbox-exporter prometheus-community/prometheus-blackbox-exporter --namespace $NAMESPACE -f blackbox-config.yaml
-
-# Install Grafana with node selector configuration
-echo "Installing Grafana..."
-helm install grafana grafana/grafana --namespace $NAMESPACE -f node-selector.yaml
-echo
 
 # Verify the deployment
 echo "Checking the status of the deployed services..."
