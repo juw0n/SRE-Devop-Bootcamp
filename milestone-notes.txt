@@ -164,8 +164,7 @@ Use the unseal key from above to unseal vault-1 and vault-2
 
 ==> vault kv put apidata/studentapi DB_DRIVER="postgres" DB_SOURCE="postgresql://schooluser:school123@postgres-service:5432/studentdb?sslmode=disable"
 
-==> vault kv put metricsexporter/dbexporter POSTGRES_DB="studentdb" POSTGRES_USER="db_metric_exporter" POSTGRES_PASSWORD="prometheus@321" POSTGRES_HOST="postgres-service" POSTGRES_PORT="5432"
-POSTGRES_DB_SOURCE="postgresql://db_metric_exporter:prometheus@321@postgres-service:5432/studentdb?sslmode=disable"
+==> vault kv put metricsexporter/dbexporter POSTGRES_DB="studentdb" POSTGRES_USER="db_metric_exporter" POSTGRES_PASSWORD="prometheus@321" POSTGRES_HOST="postgres-service" POSTGRES_PORT="5432" POSTGRES_DB_SOURCE="postgresql://db_metric_exporter:prometheus@321@postgres-service:5432/studentdb?sslmode=disable"
 
 5. Verify that the secret is defined at the path secret/webapp/config
 ==> vault kv get secretdata/postgresql
@@ -454,6 +453,8 @@ Resources:
 ### Milestone 10 - Setup an observability stack
 
 ****************Create this user for monitoring the db****************
+sign in to create the user: kubectl exec -it postgres-db-deployment-86c989899-zxndh -n student-api-ns -- psql -U schooluser -d studentdb
+
 CREATE USER db_metric_exporter WITH PASSWORD 'prometheus@321';
 
 GRANT CONNECT ON DATABASE studentdb TO db_metric_exporter;

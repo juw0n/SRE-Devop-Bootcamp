@@ -37,7 +37,7 @@ env:
       secretKeyRef:
         name: metrics-credential
         key: POSTGRES_PORT
-  - name: DATA_SOURCE_NAME
+  - name: DATA_SOURCE_URI
     value: postgresql://$(DATA_SOURCE_USER):$(DATA_SOURCE_PASS)@$(POSTGRES_HOST):$(POSTGRES_PORT)/$(POSTGRES_DB)?sslmode=disable
 
 # Prometheus scrape configuration
@@ -46,16 +46,3 @@ prometheus:
   annotations:
     prometheus.io/scrape: "true"
     prometheus.io/port: "9187"
-
-# # ServiceMonitor for Prometheus Operator
-# serviceMonitor:
-#   enabled: true
-#   interval: 10s
-#   scrapeTimeout: 10s
-#   selector:
-#     matchLabels:
-#       release: prometheus
-#   endpoints:
-#     - port: http
-#       path: /metrics
-#       interval: 10s

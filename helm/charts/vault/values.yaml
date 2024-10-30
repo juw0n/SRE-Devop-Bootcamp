@@ -82,9 +82,39 @@ apiExternalSecretStore:
       property: DB_SOURCE
 
 
+# metricsExternalSecretStore:
+#   name: metrics-secrets
+#   namespace: student-api-ns
+#   refreshInterval: "1h"
+#   secretStoreRef:
+#     name: metrics-backend
+#     kind: SecretStore
+#   target:
+#     name: metrics-credential
+#     creationPolicy: Owner
+#   data:
+#     POSTGRES_USER:
+#       key: metricsexporter/data/dbexporter
+#       property: POSTGRES_USER
+#     POSTGRES_PASSWORD:
+#       key: metricsexporter/data/dbexporter
+#       property: POSTGRES_PASSWORD
+#     POSTGRES_DB:
+#       key: metricsexporter/data/dbexporter
+#       property: POSTGRES_DB
+#     POSTGRES_HOST:
+#       key: metricsexporter/data/dbexporter
+#       property: POSTGRES_HOST
+#     POSTGRES_PORT:
+#       key: metricsexporter/data/dbexporter
+#       property: POSTGRES_PORT
+#     POSTGRES_DB_SOURCE:
+#       key: metricsexporter/data/dbexporter
+#       property: POSTGRES_DB_SOURCE
+
 metricsExternalSecretStore:
   name: metrics-secrets
-  namespace: student-api-ns
+  namespace: observability
   refreshInterval: "1h"
   secretStoreRef:
     name: metrics-backend
