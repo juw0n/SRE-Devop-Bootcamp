@@ -1,36 +1,35 @@
 # promtail configuration to send only application logs to Loki
-promtail:
-  config:
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: promtail-config
+  namespace: observability
+data:
+  promtail.yaml: |
+    server:
+      http_listen_port: 9080
+    positions:
+      filename: /tmp/positions.yaml
+    clients:
+      - url: http://loki:3100/loki/api/v1/push
     scrape_configs:
-      - job_name: 'student-api-logs'
+      - job_name: app-logs
         kubernetes_sd_configs:
           - role: pod
         relabel_configs:
-          # Keep only the logs from the namespace "student-api-ns"
-          - source_labels: [__meta_kubernetes_namespace]
-            action: keep
-            regex: student-api-ns
-          # Keep only logs from the container named "student-api-app"
-          - source_labels: [__meta_kubernetes_pod_container_name]
-            action: keep
+          - source_labels: [__meta_kubernetes_pod_label_app]
             regex: student-api-app
-          # You can use a regex pattern to match pod names instead of hardcoding
-          - source_labels: [__meta_kubernetes_pod_name]
             action: keep
-            regex: student-api-deployment-.* # Matches any pod starting with this name
+          - source_labels: [__meta_kubernetes_namespace]
+            regex: student-api-ns
+            target_label: namespace
           - source_labels: [__meta_kubernetes_pod_name]
-            action: replace
-            target_label: __path__
-            replacement: /var/log/containers/*student-api-app*.log
-
-
-# promtail:
-#   config:
-#     scrape_configs:
-#       - job_name: 'application-logs'
-#         static_configs:
-#           - targets:
-#               - localhost
-#             labels:
-#               job: application
-#               __path__: /var/log/app/*.log
+            target_label: instance
+        pipeline_stages:
+          - docker: {}
+        static_configs:
+          - targets: ['localhost']
+            labels:
+              job: varlogs
+              __path__: /var/log/**/*.log
