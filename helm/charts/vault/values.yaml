@@ -30,7 +30,7 @@ apiSecretStore:
 
 metricsSecretStore:
   name: metrics-backend
-  namespace: student-api-ns
+  namespace: observability
   vault:
     server: "http://10.101.59.0:8200"
     path: "metricsexporter"
