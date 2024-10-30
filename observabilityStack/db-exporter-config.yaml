@@ -16,29 +16,34 @@ env:
     valueFrom:
       secretKeyRef:
         name: metrics-credential
-        key: POSTGRES_USER
+        key: DATA_SOURCE_USER
   - name: DATA_SOURCE_PASS
     valueFrom:
       secretKeyRef:
         name: metrics-credential
-        key: POSTGRES_PASSWORD
-  - name: POSTGRES_DB
+        key: DATA_SOURCE_PASS
+  - name: DATA_SOURCE_DB
     valueFrom:
       secretKeyRef:
         name: metrics-credential
-        key: POSTGRES_DB
-  - name: POSTGRES_HOST
+        key: DATA_SOURCE_DB
+  - name: DATA_SOURCE_HOST
     valueFrom:
       secretKeyRef:
         name: metrics-credential
-        key: POSTGRES_HOST
-  - name: POSTGRES_PORT
+        key: DATA_SOURCE_HOST
+  - name: DATA_SOURCE_PORT
     valueFrom:
       secretKeyRef:
         name: metrics-credential
-        key: POSTGRES_PORT
+        key: DATA_SOURCE_PORT
   - name: DATA_SOURCE_URI
-    value: postgresql://$(DATA_SOURCE_USER):$(DATA_SOURCE_PASS)@$(POSTGRES_HOST):$(POSTGRES_PORT)/$(POSTGRES_DB)?sslmode=disable
+    valueFrom:
+      secretKeyRef:
+        name: metrics-credential
+        key: DATA_SOURCE_URI
+  # - name: DATA_SOURCE_URI
+  #   value: postgresql://$(DATA_SOURCE_USER):$(DATA_SOURCE_PASS)@$(DATA_SOURCE_HOST):$(DATA_SOURCE_PORT)/$(DATA_SOURCE_DB)?sslmode=disable
 
 # Prometheus scrape configuration
 prometheus:

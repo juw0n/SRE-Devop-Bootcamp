@@ -55,14 +55,14 @@ metadata:
 #   name: argocd
 #   labels:
 #     name: argocd
-# ---
-# # observability
-# apiVersion: v1
-# kind: Namespace
-# metadata:
-#   name: observability
-#   labels:
-#     name: observability
+---
+# observability
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: observability
+  labels:
+    name: observability
 EOF
 
 echo "Done creating namespaces"

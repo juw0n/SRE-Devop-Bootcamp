@@ -164,7 +164,7 @@ Use the unseal key from above to unseal vault-1 and vault-2
 
 ==> vault kv put apidata/studentapi DB_DRIVER="postgres" DB_SOURCE="postgresql://schooluser:school123@postgres-service:5432/studentdb?sslmode=disable"
 
-==> vault kv put metricsexporter/dbexporter POSTGRES_DB="studentdb" POSTGRES_USER="db_metric_exporter" POSTGRES_PASSWORD="prometheus@321" POSTGRES_HOST="postgres-service" POSTGRES_PORT="5432" POSTGRES_DB_SOURCE="postgresql://db_metric_exporter:prometheus@321@postgres-service:5432/studentdb?sslmode=disable"
+==> vault kv put metricsexporter/dbexporter DATA_SOURCE_DB="studentdb" DATA_SOURCE_USER="db_metric_exporter" DATA_SOURCE_PASS="prometheus@321" DATA_SOURCE_HOST="postgres-service" DATA_SOURCE_PORT="5432" DATA_SOURCE_URI="postgresql://db_metric_exporter:prometheus@321@postgres-service:5432/studentdb?sslmode=disable"
 
 5. Verify that the secret is defined at the path secret/webapp/config
 ==> vault kv get secretdata/postgresql

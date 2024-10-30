@@ -123,21 +123,21 @@ metricsExternalSecretStore:
     name: metrics-credential
     creationPolicy: Owner
   data:
-    POSTGRES_USER:
+    DATA_SOURCE_USER:
       key: metricsexporter/data/dbexporter
-      property: POSTGRES_USER
-    POSTGRES_PASSWORD:
+      property: DATA_SOURCE_USER
+    DATA_SOURCE_PASS:
       key: metricsexporter/data/dbexporter
-      property: POSTGRES_PASSWORD
-    POSTGRES_DB:
+      property: DATA_SOURCE_PASS
+    DATA_SOURCE_DB:
       key: metricsexporter/data/dbexporter
-      property: POSTGRES_DB
-    POSTGRES_HOST:
+      property: DATA_SOURCE_DB
+    DATA_SOURCE_HOST:
       key: metricsexporter/data/dbexporter
-      property: POSTGRES_HOST
-    POSTGRES_PORT:
+      property: DATA_SOURCE_HOST
+    DATA_SOURCE_PORT:
       key: metricsexporter/data/dbexporter
-      property: POSTGRES_PORT
-    POSTGRES_DB_SOURCE:
+      property: DATA_SOURCE_PORT
+    DATA_SOURCE_URI:
       key: metricsexporter/data/dbexporter
-      property: POSTGRES_DB_SOURCE
+      property: DATA_SOURCE_URI
