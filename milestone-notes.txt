@@ -166,6 +166,8 @@ Use the unseal key from above to unseal vault-1 and vault-2
 
 ==> vault kv put metricsexporter/dbexporter DATA_SOURCE_DB="studentdb" DATA_SOURCE_USER="db_metric_exporter" DATA_SOURCE_PASS="prometheus@321" DATA_SOURCE_HOST="postgres-service" DATA_SOURCE_PORT="5432" DATA_SOURCE_URI="postgresql://db_metric_exporter:prometheus@321@postgres-service:5432/studentdb?sslmode=disable"
 
+postgresql://$(DATA_SOURCE_USER):$(DATA_SOURCE_PASS)@$(POSTGRES_HOST):$(POSTGRES_PORT)/$(POSTGRES_DB)?sslmode=disable
+
 5. Verify that the secret is defined at the path secret/webapp/config
 ==> vault kv get secretdata/postgresql
 ==> vault kv get apidata/studentapi
@@ -236,6 +238,7 @@ Check ruuning external-secrets pods
 4. Create Generic token: Create the Vault token secret to be used in the created SecretStore
 kubectl create secret generic vault-token --from-literal=token=<YOUR_VAULT_TOKEN> -n <namespace>
 ==> kubectl create secret generic vault-token -n student-api-ns --from-literal=token=<VAULT_TOKEN>
+==> kubectl create secret generic vault-token -n observability --from-literal=token=<VAULT_TOKEN>
 ==> kubectl get secrets -n student-api-ns
 ==> kubectl get secret vault-token -n student-api-ns -o yaml
 ** To get it in JSON format:
