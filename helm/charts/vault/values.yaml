@@ -40,7 +40,7 @@ metricsSecretStore:
         key: token
 
 metricsDBSecretStore:
-  name: metricsDB-backend
+  name: metrics-db-backend
   namespace: observability
   vault:
     server: "http://10.104.105.102:8200"
@@ -124,14 +124,14 @@ metricsExternalSecretStore:
       property: DATA_SOURCE_URI
 
 metricsDBExternalSecretStore:
-  name: metricsDB-secrets
+  name: metrics-db-secrets
   namespace: observability
   refreshInterval: "1h"
   secretStoreRef:
-    name: metricsDB-backend
+    name: metrics-db-backend
     kind: SecretStore
   target:
-    name: metrics-credential
+    name: metrics-db-credential
     creationPolicy: Owner
   data:
     DATA_SOURCE_USER:
