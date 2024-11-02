@@ -1,40 +1,50 @@
-# values.yaml for Prometheus Blackbox Exporter
-service:
-  enabled: true
-  type: ClusterIP  # Change to NodePort or LoadBalancer if external access is needed
-  port: 9115
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: blackbox-exporter-config
+  namespace: observability
+data:
+  blackbox.yaml: |
+    modules:
+      http_2xx:
+        http:
+          fail_if_not_ssl: true
+          ip_protocol_fallback: false
+          method: GET
+          no_follow_redirects: false
+          preferred_ip_protocol: ip4
+          valid_http_versions: ["HTTP/1.1", "HTTP/2.0"]
+          valid_status_codes: [200, 204]
+        prober: http
+        timeout: 15s
 
-config:
-  modules:
-    http_2xx:
-      prober: http
-      timeout: 5s
-      http:
-        method: GET
-        valid_http_versions: ["HTTP/1.1", "HTTP/2"]
-        valid_status_codes: []  # Defaults to 2xx
-        fail_if_ssl: false
-        fail_if_not_ssl: false
 
-    tcp_connect:
-      prober: tcp
-      timeout: 5s
 
-prometheus:
-  enabled: true
-  annotations:
-    prometheus.io/scrape: "true"
-    prometheus.io/port: "9115"
 
-# # ServiceMonitor for Prometheus Operator
-# serviceMonitor:
+# # values.yaml for Prometheus Blackbox Exporter
+# service:
 #   enabled: true
-#   interval: 30s
-#   scrapeTimeout: 10s
-#   selector:
-#     matchLabels:
-#       app: blackbox-exporter  # Match labels with the Blackbox Exporter deployment
-#   endpoints:
-#     - port: http
-#       path: /metrics
-#       interval: 30s
+#   type: ClusterIP  # Change to NodePort or LoadBalancer if external access is needed
+#   port: 9115
+
+# config:
+#   modules:
+#     http_2xx:
+#       prober: http
+#       timeout: 5s
+#       http:
+#         method: GET
+#         valid_http_versions: ["HTTP/1.1", "HTTP/2"]
+#         valid_status_codes: [200,204]  # Defaults to 2xx
+#         fail_if_ssl: false
+#         fail_if_not_ssl: false
+
+#     tcp_connect:
+#       prober: tcp
+#       timeout: 5s
+
+# prometheus:
+#   enabled: true
+#   annotations:
+#     prometheus.io/scrape: "true"
+#     prometheus.io/port: "9115"

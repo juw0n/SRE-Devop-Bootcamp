@@ -6,7 +6,7 @@ dbSecretStore:
   name: vault-backend
   namespace: student-api-ns
   vault:
-    server: "http://10.101.59.0:8200"
+    server: "http://10.104.105.102:8200"
     path: "secretdata"
     version: "v2"
     auth:
@@ -19,7 +19,7 @@ apiSecretStore:
   name: api-backend
   namespace: student-api-ns
   vault:
-    server: "http://10.101.59.0:8200"
+    server: "http://10.104.105.102:8200"
     path: "apidata"
     version: "v2"
     auth:
@@ -27,12 +27,23 @@ apiSecretStore:
         name: vault-token
         key: token
 
-
 metricsSecretStore:
+  name: metrics-backend
+  namespace: student-api-ns
+  vault:
+    server: "http://10.104.105.102:8200"
+    path: "metricsexporter"
+    version: "v2"
+    auth:
+      tokenSecretRef:
+        name: vault-token
+        key: token
+
+metricsDBSecretStore:
   name: metrics-backend
   namespace: observability
   vault:
-    server: "http://10.101.59.0:8200"
+    server: "http://10.104.105.102:8200"
     path: "metricsexporter"
     version: "v2"
     auth:
@@ -82,37 +93,37 @@ apiExternalSecretStore:
       property: DB_SOURCE
 
 
-# metricsExternalSecretStore:
-#   name: metrics-secrets
-#   namespace: student-api-ns
-#   refreshInterval: "1h"
-#   secretStoreRef:
-#     name: metrics-backend
-#     kind: SecretStore
-#   target:
-#     name: metrics-credential
-#     creationPolicy: Owner
-#   data:
-#     POSTGRES_USER:
-#       key: metricsexporter/data/dbexporter
-#       property: POSTGRES_USER
-#     POSTGRES_PASSWORD:
-#       key: metricsexporter/data/dbexporter
-#       property: POSTGRES_PASSWORD
-#     POSTGRES_DB:
-#       key: metricsexporter/data/dbexporter
-#       property: POSTGRES_DB
-#     POSTGRES_HOST:
-#       key: metricsexporter/data/dbexporter
-#       property: POSTGRES_HOST
-#     POSTGRES_PORT:
-#       key: metricsexporter/data/dbexporter
-#       property: POSTGRES_PORT
-#     POSTGRES_DB_SOURCE:
-#       key: metricsexporter/data/dbexporter
-#       property: POSTGRES_DB_SOURCE
-
 metricsExternalSecretStore:
+  name: metrics-secrets
+  namespace: student-api-ns
+  refreshInterval: "1h"
+  secretStoreRef:
+    name: metrics-backend
+    kind: SecretStore
+  target:
+    name: metrics-credential
+    creationPolicy: Owner
+  data:
+    DATA_SOURCE_USER:
+      key: metricsexporter/data/dbexporter
+      property: DATA_SOURCE_USER
+    DATA_SOURCE_PASS:
+      key: metricsexporter/data/dbexporter
+      property: DATA_SOURCE_PASS
+    DATA_SOURCE_DB:
+      key: metricsexporter/data/dbexporter
+      property: DATA_SOURCE_DB
+    DATA_SOURCE_HOST:
+      key: metricsexporter/data/dbexporter
+      property: DATA_SOURCE_HOST
+    DATA_SOURCE_PORT:
+      key: metricsexporter/data/dbexporter
+      property: DATA_SOURCE_PORT
+    DATA_SOURCE_URI:
+      key: metricsexporter/data/dbexporter
+      property: DATA_SOURCE_URI
+
+metricsDBExternalSecretStore:
   name: metrics-secrets
   namespace: observability
   refreshInterval: "1h"

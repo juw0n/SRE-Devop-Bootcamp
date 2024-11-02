@@ -1,0 +1,6 @@
+# promtail-values.yaml
+config:
+  config:
+    map:
+      name: promtail-config
+      key: promtail.yaml

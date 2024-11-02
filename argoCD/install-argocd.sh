@@ -49,7 +49,10 @@ kubectl create namespace "$NAMESPACE"
 echo
 # Install Argo CD using Helm on a specified node using node-selector.yaml
 echo "Installing Argo CD with Helm..."
-helm install "$RELEASE_NAME" "$HELM_REPO_NAME/$HELM_CHART_NAME" --namespace "$NAMESPACE" -f node-selector.yaml
+helm install "$RELEASE_NAME" "$HELM_REPO_NAME/$HELM_CHART_NAME" \
+  --namespace "$NAMESPACE" \
+  -f node-selector.yaml \
+  --set nodeSelector.service=dependent-services-node
 
 # Confirm Argo CD installation
 echo "Checking Argo CD installation..."

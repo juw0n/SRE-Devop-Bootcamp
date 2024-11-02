@@ -1,0 +1,10 @@
+extraArgs:
+  - --config.file=/etc/blackbox_exporter/config.yaml
+extraVolumes:
+  - name: config-volume
+    configMap:
+      name: blackbox-exporter-config
+extraVolumeMounts:
+  - name: config-volume
+    mountPath: /etc/blackbox_exporter
+    subPath: blackbox.yaml

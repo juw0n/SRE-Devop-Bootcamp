@@ -32,6 +32,7 @@ echo
 echo "Installing External Secrets Operator..."
 helm install external-secrets external-secrets/external-secrets \
   --namespace external-secrets-ns \
+  --set nodeSelector.service=dependent-services-node \
   -f eso-node-values.yaml
 echo "*****External Secrets Operator installed.*****"
 echo
