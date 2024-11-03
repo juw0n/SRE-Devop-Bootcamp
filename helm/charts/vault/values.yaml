@@ -39,19 +39,6 @@ metricsSecretStore:
         name: vault-token
         key: token
 
-# metricsDBSecretStore:
-#   name: metrics-db-backend
-#   namespace: observability
-#   vault:
-#     server: "http://10.104.105.102:8200"
-#     path: "metricsexporter"
-#     version: "v2"
-#     auth:
-#       tokenSecretRef:
-#         name: vault-token
-#         key: token
-
-
 dbExternalSecretStore:
   name: postgres-secrets
   namespace: student-api-ns
@@ -122,33 +109,3 @@ metricsExternalSecretStore:
     DATA_SOURCE_URI:
       key: metricsexporter/data/dbexporter
       property: DATA_SOURCE_URI
-
-# metricsDBExternalSecretStore:
-#   name: metrics-db-secrets
-#   namespace: observability
-#   refreshInterval: "1h"
-#   secretStoreRef:
-#     name: metrics-db-backend
-#     kind: SecretStore
-#   target:
-#     name: metrics-db-credential
-#     creationPolicy: Owner
-#   data:
-#     DATA_SOURCE_USER:
-#       key: metricsexporter/data/dbexporter
-#       property: DATA_SOURCE_USER
-#     DATA_SOURCE_PASS:
-#       key: metricsexporter/data/dbexporter
-#       property: DATA_SOURCE_PASS
-#     DATA_SOURCE_DB:
-#       key: metricsexporter/data/dbexporter
-#       property: DATA_SOURCE_DB
-#     DATA_SOURCE_HOST:
-#       key: metricsexporter/data/dbexporter
-#       property: DATA_SOURCE_HOST
-#     DATA_SOURCE_PORT:
-#       key: metricsexporter/data/dbexporter
-#       property: DATA_SOURCE_PORT
-#     DATA_SOURCE_URI:
-#       key: metricsexporter/data/dbexporter
-#       property: DATA_SOURCE_URI
