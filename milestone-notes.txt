@@ -479,14 +479,24 @@ Before installing Prometheus, Loki, and Grafana, you'll need to add their respec
 
 # Update your Helm repositories to ensure you have the latest versions
 ==> helm repo update
+
 2. Install the Services:
 # Install Prometheus
-==> helm install prometheus prometheus-community/prometheus --namespace observability -f node-selector.yaml
+==> helm install prometheus prometheus-community/prometheus \
+  --namespace $NAMESPACE \
+  --set server.nodeSelector.service=dependent-services-node \
+  --set alertmanager.nodeSelector.service=dependent-services-node \
+  --set nodeExporter.nodeSelector.service=dependent-services-node \
+  --set kube-state-metrics.nodeSelector.service=dependent-services-node \
+  --set pushgateway.nodeSelector.service=dependent-services-node
+
 # Install Loki (with Promtail) from Grafana repo
 ==> helm install loki grafana/loki-stack --namespace observability -f node-selector.yaml
 
 # Install Grafana
-==> helm install grafana grafana/grafana --namespace observability -f node-selector.yaml
+==> helm install grafana grafana/grafana \
+  --namespace observability \
+  --set nodeSelector.service=dependent-services-node
 
 PS:
 Prometheus server was giving crashloopback error and got the issue fixed with 

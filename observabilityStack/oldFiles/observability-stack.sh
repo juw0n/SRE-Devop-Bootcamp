@@ -25,7 +25,13 @@ echo
 
 # Install Prometheus with node selector configuration
 echo "Installing Prometheus..."
-helm install prometheus prometheus-community/prometheus --namespace $NAMESPACE -f node-selector.yaml
+helm install prometheus prometheus-community/prometheus \
+  --namespace $NAMESPACE \
+  --set server.nodeSelector.service=dependent-services-node \
+  --set alertmanager.nodeSelector.service=dependent-services-node \
+  --set nodeExporter.nodeSelector.service=dependent-services-node \
+  --set kube-state-metrics.nodeSelector.service=dependent-services-node \
+  --set pushgateway.nodeSelector.service=dependent-services-node
 echo
 
 # Install Loki with Promtail using Grafana repo and node selector configuration
