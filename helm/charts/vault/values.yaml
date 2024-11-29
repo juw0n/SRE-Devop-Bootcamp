@@ -6,7 +6,7 @@ dbSecretStore:
   name: vault-backend
   namespace: student-api-ns
   vault:
-    server: "http://10.106.6.33:8200"
+    server: "http://10.106.237.169:8200"
     path: "secretdata"
     version: "v2"
     auth:
@@ -19,7 +19,7 @@ apiSecretStore:
   name: api-backend
   namespace: student-api-ns
   vault:
-    server: "http://10.106.6.33:8200"
+    server: "http://10.106.237.169:8200"
     path: "apidata"
     version: "v2"
     auth:
@@ -31,7 +31,7 @@ metricsSecretStore:
   name: metrics-backend
   namespace: student-api-ns
   vault:
-    server: "http://10.106.6.33:8200"
+    server: "http://10.106.237.169:8200"
     path: "metricsexporter"
     version: "v2"
     auth:
@@ -43,7 +43,7 @@ metricsDBSecretStore:
   name: metrics-db-backend
   namespace: observability
   vault:
-    server: "http://10.106.6.33:8200"
+    server: "http://10.106.237.169:8200"
     path: "metricsexporter"
     version: "v2"
     auth:

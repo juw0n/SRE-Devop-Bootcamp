@@ -1,3 +1,6 @@
+Postman Documentation Sample
+https://www.postman.com/restless-robot-286687/one2n-bootcamp/collection/fvvsvxi/student
+=====================================================================
 # Milestone 6 - Setup Kubernetes cluster
 =========================================================================
 ## Problem Statement
@@ -240,6 +243,7 @@ kubectl create secret generic vault-token --from-literal=token=<YOUR_VAULT_TOKEN
 ==> kubectl create secret generic vault-token -n student-api-ns --from-literal=token=<VAULT_TOKEN>
 ==> kubectl create secret generic vault-token -n observability --from-literal=token=<VAULT_TOKEN>
 ==> kubectl get secrets -n student-api-ns
+==> kubectl get secrets -n observability
 ==> kubectl get secret vault-token -n student-api-ns -o yaml
 ** To get it in JSON format:
 ==> kubectl get secret vault-token -n student-api-ns -o json
@@ -269,7 +273,7 @@ Apply the ExternalSecretStore Configuration
 In your ExternalSecret, ensure you reference the SecretStore and the correct namespaces.
 ==> kubectl apply -f external-secret.yaml
 ==> kubectl get externalsecret -n student-api-ns
-==> kubectl describe externalsecret postgres-secrets -n student-api-ns
+==> kubectl describe externsalsecret postgres-secrets -n student-api-ns
 ==> kubectl delete externalsecret postgres-secrets -n student-api-ns
 ** Check the created Secret according to your externalSecretStore yaml
 ==> kubectl get secret postgres-credential -n student-api-ns -o yaml
