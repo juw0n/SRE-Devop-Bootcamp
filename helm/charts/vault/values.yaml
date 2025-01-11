@@ -41,7 +41,7 @@ metricsSecretStore:
 
 metricsDBSecretStore:
   name: metrics-db-backend
-  namespace: observability
+  namespace: observability-ns
   vault:
     server: "http://10.111.218.222:8200"
     path: "metricsexporter"
@@ -124,7 +124,7 @@ metricsExternalSecretStore:
 
 metricsDBExternalSecretStore:
   name: metrics-db-secrets
-  namespace: observability
+  namespace: observability-ns
   refreshInterval: "1h"
   secretStoreRef:
     name: metrics-db-backend
